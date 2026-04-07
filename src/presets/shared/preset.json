@@ -10,7 +10,8 @@
       "ak-test",
       "ak-sequential-thinking",
       "ak-scout",
-      "ak-research"
+      "ak-research",
+      "ak-daily-report"
     ],
     "rules": [
       "development-rules.md",
@@ -18,7 +19,36 @@
     ],
     "hooks": []
   },
-  "settings": {},
+  "settings": {
+    "enabledPlugins": {
+      "claude-mem@thedotmack": true,
+      "qmd@qmd": true
+    },
+    "extraKnownMarketplaces": {
+      "thedotmack": {
+        "source": {
+          "source": "github",
+          "repo": "thedotmack/claude-mem"
+        }
+      },
+      "qmd": {
+        "source": {
+          "source": "github",
+          "repo": "tobi/qmd"
+        }
+      }
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--extension"]
+    },
+    "agent-browser": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/agent-browser@latest"]
+    }
+  },
   "dependencies": {
     "scripts": []
   }

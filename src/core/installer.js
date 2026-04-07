@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 import chalk from 'chalk';
-import { mergeSettings } from './settings-merger.js';
+import { mergeSettings, mergeMcpConfig } from './settings-merger.js';
 import { readManifest, writeManifest } from './manifest.js';
 import { runDependencyScripts } from './dependency-runner.js';
 
@@ -25,6 +25,12 @@ export async function install(targetDir, presetChain, options = {}) {
     if (preset.settings && Object.keys(preset.settings).length > 0 && !dryRun) {
       mergeSettings(targetDir, preset.settings);
       console.log(`  ${chalk.green('+')} settings.json merged (${preset.name})`);
+    }
+
+    // Merge MCP server configs into .mcp.json
+    if (preset.mcp && Object.keys(preset.mcp).length > 0 && !dryRun) {
+      mergeMcpConfig(targetDir, preset.mcp);
+      console.log(`  ${chalk.green('+')} .mcp.json merged (${preset.name})`);
     }
 
     // Run dependency scripts

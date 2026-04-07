@@ -9,7 +9,8 @@ const PRESET_FLAGS = ['nextjs', 'hubspot', 'php', 'global'];
 
 /**
  * Register the install command with Commander program.
- * Supports --nextjs, --hubspot, --php, --global flags.
+ * Shared/common preset always installs to ~/.claude/ (global scope).
+ * Project presets install to CWD/.claude/ (project scope).
  */
 export function registerInstallCommand(program) {
   const cmd = program
@@ -21,7 +22,6 @@ export function registerInstallCommand(program) {
     .option('--global', 'Install global user-scope preset to ~/.claude/')
     .option('--dry-run', 'Preview what would be installed without making changes')
     .action(async (options) => {
-      // Collect selected presets from flags
       const selected = PRESET_FLAGS.filter(flag => options[flag]);
 
       if (selected.length === 0) {
@@ -36,17 +36,36 @@ export function registerInstallCommand(program) {
         process.exit(1);
       }
 
+      const globalDir = path.join(os.homedir(), '.claude');
+      const projectDir = path.join(process.cwd(), '.claude');
+      const dryRun = options.dryRun || false;
+
+      // Step 1: Always install shared/common to global (~/.claude/)
+      console.log(chalk.bold(`\nInstalling ${chalk.cyan('shared')} preset → ${chalk.dim(globalDir)}`));
+      try {
+        const sharedChain = resolvePresets('shared');
+        await install(globalDir, sharedChain, { dryRun });
+        console.log(chalk.green('✓ shared preset installed (global)'));
+      } catch (err) {
+        console.error(chalk.red(`✗ Failed to install shared: ${err.message}`));
+        process.exit(1);
+      }
+
+      // Step 2: Install selected presets
       for (const presetName of selected) {
-        // Global preset targets ~/.claude/, project presets target CWD/.claude/
-        const targetDir = presetName === 'global'
-          ? path.join(os.homedir(), '.claude')
-          : path.join(process.cwd(), '.claude');
+        // Global and shared go to ~/.claude/, project presets to CWD/.claude/
+        const targetDir = presetName === 'global' ? globalDir : projectDir;
 
         console.log(chalk.bold(`\nInstalling ${chalk.cyan(presetName)} preset → ${chalk.dim(targetDir)}`));
 
         try {
-          const preset = resolvePresets(presetName);
-          await install(targetDir, preset, { dryRun: options.dryRun || false });
+          // Resolve without shared (already installed globally)
+          const chain = resolvePresets(presetName);
+          // Filter out the shared preset from chain — already installed above
+          const filtered = chain.filter(p => p.name !== 'shared');
+          if (filtered.length === 0) continue;
+
+          await install(targetDir, filtered, { dryRun });
           console.log(chalk.green(`✓ ${presetName} preset installed`));
         } catch (err) {
           console.error(chalk.red(`✗ Failed to install ${presetName}: ${err.message}`));

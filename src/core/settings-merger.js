@@ -87,6 +87,31 @@ function dedupeHookEntries(existing, incoming) {
   return [...existing, ...newEntries];
 }
 
+/**
+ * Merge MCP server configs into .mcp.json in the target directory.
+ * Adds new servers without overwriting existing ones.
+ */
+export function mergeMcpConfig(targetDir, mcpServers) {
+  const mcpPath = path.join(targetDir, '.mcp.json');
+  let existing = { mcpServers: {} };
+
+  if (fs.existsSync(mcpPath)) {
+    const backupPath = path.join(targetDir, `.mcp.json.bak.${Date.now()}`);
+    fs.copySync(mcpPath, backupPath);
+    existing = fs.readJsonSync(mcpPath);
+    if (!existing.mcpServers) existing.mcpServers = {};
+  }
+
+  // Only add servers that don't already exist (don't overwrite user configs)
+  for (const [name, config] of Object.entries(mcpServers)) {
+    if (!existing.mcpServers[name]) {
+      existing.mcpServers[name] = config;
+    }
+  }
+
+  fs.writeJsonSync(mcpPath, existing, { spaces: 2 });
+}
+
 function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
