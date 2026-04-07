@@ -1,11 +1,13 @@
 {
   "name": "php",
-  "description": "PHP backend (Laravel/Symfony) preset",
+  "description": "PHP backend (Magento 2, Laravel, Symfony) preset",
   "includes": ["shared"],
   "artifacts": {
     "skills": [
       "ak-backend-development",
-      "ak-databases"
+      "ak-databases",
+      "ak-ship-feature",
+      "ak-php-code-reviewer"
     ],
     "rules": [],
     "hooks": [],
