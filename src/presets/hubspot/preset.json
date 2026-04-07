@@ -1,0 +1,23 @@
+{
+  "name": "hubspot",
+  "description": "HubSpot CMS theme + HubL + fields.js preset",
+  "includes": ["shared"],
+  "artifacts": {
+    "skills": [
+      "ak-hubspot-hubl",
+      "ak-hubspot-fields-js",
+      "ak-figma-to-hubspot",
+      "ak-figma-asset-exporter",
+      "ak-visual-diff-tester"
+    ],
+    "rules": [
+      "hubspot-generator-rules.md"
+    ],
+    "hooks": [],
+    "templates": []
+  },
+  "settings": {},
+  "dependencies": {
+    "scripts": []
+  }
+}

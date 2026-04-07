@@ -1,0 +1,25 @@
+{
+  "name": "shared",
+  "description": "Common artifacts included in every project preset",
+  "includes": [],
+  "artifacts": {
+    "skills": [
+      "ak-git",
+      "ak-code-review",
+      "ak-debug",
+      "ak-test",
+      "ak-sequential-thinking",
+      "ak-scout",
+      "ak-research"
+    ],
+    "rules": [
+      "development-rules.md",
+      "documentation-management.md"
+    ],
+    "hooks": []
+  },
+  "settings": {},
+  "dependencies": {
+    "scripts": []
+  }
+}

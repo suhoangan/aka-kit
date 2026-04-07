@@ -1,0 +1,11 @@
+{
+  "name": "hubspot-generator-skills",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependencies for Figma-to-HubSpot generator skills (isolated from project)",
+  "dependencies": {
+    "puppeteer": "^23.0.0",
+    "pngjs": "^7.0.0",
+    "pixelmatch": "^5.3.0"
+  }
+}

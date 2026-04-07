@@ -1,0 +1,4 @@
+node_modules/
+.ak-kit.json
+*.bak.*
+.DS_Store

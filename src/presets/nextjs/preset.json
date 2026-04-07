@@ -1,0 +1,22 @@
+{
+  "name": "nextjs",
+  "description": "Next.js + React + TypeScript preset",
+  "includes": ["shared"],
+  "artifacts": {
+    "skills": [
+      "ak-frontend-development",
+      "ak-web-frameworks",
+      "ak-react-best-practices",
+      "ak-ui-styling",
+      "ak-web-testing",
+      "ak-frontend-design"
+    ],
+    "rules": [],
+    "hooks": [],
+    "templates": []
+  },
+  "settings": {},
+  "dependencies": {
+    "scripts": []
+  }
+}
