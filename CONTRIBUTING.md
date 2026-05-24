@@ -8,7 +8,11 @@ Thanks for helping improve the kit.
 git clone https://github.com/suhoangan/aka-kit.git
 cd aka-kit
 npm install
-npm link              # makes `aka-kit` available globally
+npm link              # global CLI — macOS, Linux, Windows
+
+# pnpm alternative (do NOT use `pnpm link --global`; use add -g . instead):
+# pnpm install && pnpm add -g .
+
 aka-kit --version      # confirm
 aka-kit doctor         # health-check your dev env
 ```

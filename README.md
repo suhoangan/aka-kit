@@ -32,9 +32,15 @@ Replace `v0.1.1` with the [latest release tag](https://github.com/suhoangan/aka-
 ```bash
 git clone https://github.com/suhoangan/aka-kit.git
 cd aka-kit
-pnpm install
-pnpm link --global
-aka-kit --version
+pnpm install   # or: npm install
+
+# Global CLI from source (pick one — works on macOS, Linux, Windows)
+npm link                  # recommended; all platforms
+pnpm add -g .             # pnpm global install from current dir
+# Do NOT use `pnpm link --global` — pnpm requires `pnpm link <dir>`
+
+# Or run without a global install:
+node bin/aka-kit.js --version
 ```
 
 **Upgrade:** `aka-kit upgrade` (re-installs from latest GitHub release tag).
@@ -43,13 +49,13 @@ aka-kit --version
 
 aka-kit is **public and open source** ([MIT](./LICENSE), copyright ansh). Before installing:
 
-| What | Where | Notes |
-| ---- | ----- | ----- |
-| Skills, rules, hooks | `<target>/.claude/` (or `.cursor/`, `.codex/`) | Copied from presets; review with `--dry-run` |
-| Settings merge | `settings.json`, `.mcp.json` | Deep-merged; `.bak.<timestamp>` backup before overwrite |
-| Permissions | `settings.json` | Pre-approved Bash/MCP rules — see [permissions-policy](src/presets/shared/rules/permissions-policy.md) |
-| Project templates | repo root (`CLAUDE.md`, `.env.example`, …) | Skipped if file already exists |
-| Manifest | `.aka-kit.json` | Tracks installed files per target |
+| What                 | Where                                          | Notes                                                                                                  |
+| -------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Skills, rules, hooks | `<target>/.claude/` (or `.cursor/`, `.codex/`) | Copied from presets; review with `--dry-run`                                                           |
+| Settings merge       | `settings.json`, `.mcp.json`                   | Deep-merged; `.bak.<timestamp>` backup before overwrite                                                |
+| Permissions          | `settings.json`                                | Pre-approved Bash/MCP rules — see [permissions-policy](src/presets/shared/rules/permissions-policy.md) |
+| Project templates    | repo root (`CLAUDE.md`, `.env.example`, …)     | Skipped if file already exists                                                                         |
+| Manifest             | `.aka-kit.json`                                | Tracks installed files per target                                                                      |
 
 **Network scripts** (optional, non-fatal if they fail) run on `aka-kit install`:
 
@@ -174,14 +180,14 @@ aka-kit upgrade --check      # compare current vs latest without installing
 
 `shared` preset wires these MCP entries into `.claude/.mcp.json`:
 
-| Server              | Package / ref (pinned)              | Transport | Requires                                              |
-| ------------------- | ----------------------------------- | --------- | ----------------------------------------------------- |
-| `playwright`        | `@playwright/mcp@0.0.75`            | npx       | Node                                                  |
-| `agent-browser`     | `agent-browser-mcp@0.1.3`           | npx       | Node; `agent-browser` CLI recommended                 |
-| `figma`             | `@vkhanhqui/figma-mcp-go@0.1.3`    | npx       | Node + Figma desktop plugin                           |
-| `context7`          | HTTP endpoint                       | http      | `CONTEXT7_API_KEY` env var (free key at context7.com) |
-| `code-review-graph` | `code-review-graph` (PyPI)          | stdio     | `pipx install code-review-graph`                      |
-| `serena`            | `oraios/serena@v1.5.1`              | stdio     | `uvx` (`pipx install uv`)                             |
+| Server              | Package / ref (pinned)          | Transport | Requires                                              |
+| ------------------- | ------------------------------- | --------- | ----------------------------------------------------- |
+| `playwright`        | `@playwright/mcp@0.0.75`        | npx       | Node                                                  |
+| `agent-browser`     | `agent-browser-mcp@0.1.3`       | npx       | Node; `agent-browser` CLI recommended                 |
+| `figma`             | `@vkhanhqui/figma-mcp-go@0.1.3` | npx       | Node + Figma desktop plugin                           |
+| `context7`          | HTTP endpoint                   | http      | `CONTEXT7_API_KEY` env var (free key at context7.com) |
+| `code-review-graph` | `code-review-graph` (PyPI)      | stdio     | `pipx install code-review-graph`                      |
+| `serena`            | `oraios/serena@v1.5.1`          | stdio     | `uvx` (`pipx install uv`)                             |
 
 `claude-mem` and `qmd` are enabled as **plugins** (via `enabledPlugins`), not MCP — installed automatically.
 

@@ -48,7 +48,7 @@ export function registerUpgradeCommand(program) {
 			if (!latest) {
 				console.log(chalk.yellow('\nNo GitHub Release published yet.\n'));
 				console.log(
-					chalk.dim('  Dev install: git clone + pnpm link --global\n'),
+					chalk.dim('  Dev install: git clone && npm install && npm link\n'),
 				);
 				process.exit(options.check ? 0 : 1);
 			}
