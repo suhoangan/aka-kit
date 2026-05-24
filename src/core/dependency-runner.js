@@ -9,6 +9,7 @@ import {
 	scriptBaseName,
 	shouldRunDependencyScript,
 } from './dependency-scripts/lib/script-policy.js';
+import { formatScopeContext } from './platforms.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const NODE_SCRIPTS_DIR = path.join(__dirname, 'dependency-scripts');
@@ -87,12 +88,17 @@ function runNodeScript(nodeScript, context = {}) {
 	});
 }
 
-function runBashScript(bash, scriptPath) {
+function runBashScript(bash, scriptPath, context = {}) {
 	execFileSync(bash, [scriptPath], {
 		stdio: 'inherit',
 		cwd: process.cwd(),
 		timeout: 180_000,
-		env: process.env,
+		env: {
+			...process.env,
+			AKAKIT_PLATFORM: context.platform || '',
+			AKAKIT_SCOPE: context.scope || '',
+			AKAKIT_TARGET_DIR: context.targetDir || '',
+		},
 	});
 }
 
@@ -117,11 +123,11 @@ export async function runDependencyScripts(presetDir, scripts, context = {}) {
 	for (const scriptPath of scripts) {
 		const base = scriptBaseName(scriptPath);
 		if (!shouldRunDependencyScript(base, context)) {
-			console.log(
-				chalk.dim(
-					`  Skipped: ${scriptPath} (${context.scope || 'project'} / ${context.platform || 'claude'})`,
-				),
+			const scopeCtx = formatScopeContext(
+				context.scope || 'project',
+				context.platform || 'claude',
 			);
+			console.log(chalk.dim(`  Skipped: ${scriptPath} (${scopeCtx})`));
 			continue;
 		}
 
@@ -161,7 +167,7 @@ export async function runDependencyScripts(presetDir, scripts, context = {}) {
 
 		console.log(chalk.dim(`  Running: ${scriptPath}`));
 		try {
-			runBashScript(bash, fullPath);
+			runBashScript(bash, fullPath, context);
 			console.log(chalk.green(`  ✓ ${scriptPath} completed`));
 		} catch (err) {
 			const detail =

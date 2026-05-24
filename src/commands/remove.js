@@ -34,7 +34,10 @@ export function registerRemoveCommand(program) {
 			for (const target of targets) {
 				console.log(chalk.dim(`  → ${target.dir} [${target.platform}]`));
 				try {
-					await removeSkill(target.dir, skill, { dryRun: options.dryRun });
+					await removeSkill(target.dir, skill, {
+						dryRun: options.dryRun,
+						platform: target.platform,
+					});
 				} catch (err) {
 					console.error(chalk.yellow(`  ~ ${err.message}`));
 				}

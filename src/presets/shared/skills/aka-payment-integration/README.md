@@ -83,7 +83,7 @@ In conversations, simply reference the platforms:
 
 **SePay Webhook Verification:**
 ```bash
-cd $HOME/.claude/skills/payment-integration/scripts
+cd $SKILL_DIR  # ~/.cursor/skills/aka-payment-integration/scripts or ~/.claude/skills/...
 node sepay-webhook-verify.js '{"id":12345,"gateway":"Vietcombank",...}'
 ```
 

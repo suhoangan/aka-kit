@@ -13,13 +13,14 @@ export function resolveSettingsForTarget(
 ) {
 	if (!presetSettings) return presetSettings;
 	let settings = presetSettings;
-	// Claude Code plugins — not used by Cursor/Codex (claude-mem installed via install-claude-mem.mjs)
-	if (platform === 'cursor' || platform === 'codex') {
+	// Claude Code plugins — not used by Cursor/Codex (claude-mem via install-claude-mem.mjs)
+	if (platform !== 'claude') {
 		settings = { ...presetSettings };
 		delete settings.enabledPlugins;
 		delete settings.extraKnownMarketplaces;
+		delete settings.hooks;
 	}
-	const hooksDir = `${path.basename(targetDir).replace(/\\/g, '/')}/hooks`;
+	const hooksDir = path.join(targetDir, 'hooks').replace(/\\/g, '/');
 	const json = JSON.stringify(settings);
 	return JSON.parse(json.replaceAll('{{HOOKS_DIR}}', hooksDir));
 }

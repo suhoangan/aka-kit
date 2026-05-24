@@ -50,7 +50,7 @@ After docs-manager completes:
 ## Phase 4: Documentation Validation (Post-Update)
 
 Run validation to detect potential hallucinations:
-1. Run: `node $HOME/.claude/scripts/validate-docs.cjs docs/`
+1. Run doc validation manually or via `aka-kit doctor --quick` on the docs folder.
 2. Display validation report (warnings only, non-blocking)
 3. Checks: code references, internal links, config keys
 

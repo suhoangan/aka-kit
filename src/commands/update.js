@@ -1,11 +1,14 @@
 import chalk from 'chalk';
+import {
+	reinstallProjectPreset,
+	reinstallUserScopePresets,
+} from '../core/preset-install.js';
 import { readManifest } from '../core/manifest.js';
-import { resolvePresets } from '../core/preset-resolver.js';
-import { install } from '../core/installer.js';
 import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
 	resolveTargetDirs,
+	formatScopeContext,
 } from '../core/platforms.js';
 
 /**
@@ -38,20 +41,19 @@ export function registerUpdateCommand(program) {
 			const dryRun = options.dryRun || false;
 			let updated = 0;
 
-			// Update project-scope presets per platform target
+			// Update project-scope presets (never re-install shared into project)
 			for (const target of targetSet.projectDirs) {
 				const manifest = readManifest(target.dir);
 				if (!manifest) continue;
 				for (const presetName of Object.keys(manifest.presets)) {
-					if (presetName === 'global') continue;
+					if (presetName === 'global' || presetName === 'shared') continue;
 					console.log(
 						chalk.bold(
-							`\nUpdating ${chalk.cyan(presetName)} → ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
+							`\nUpdating ${chalk.cyan(presetName)} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 						),
 					);
 					try {
-						const chain = resolvePresets(presetName);
-						await install(target.dir, chain, {
+						await reinstallProjectPreset(target.dir, presetName, {
 							dryRun,
 							platform: target.platform,
 							scope: target.scope,
@@ -66,26 +68,34 @@ export function registerUpdateCommand(program) {
 				}
 			}
 
-			// Update global preset per platform target
+			// Update user-scope shared + global presets
 			for (const target of targetSet.globalDirs) {
 				const manifest = readManifest(target.dir);
-				if (!manifest?.presets?.global) continue;
-				console.log(
-					chalk.bold(
-						`\nUpdating ${chalk.cyan('global')} → ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
-					),
+				if (!manifest) continue;
+				const userPresets = ['shared', 'global'].filter(
+					(n) => manifest.presets?.[n],
 				);
-				try {
-					const chain = resolvePresets('global');
-					await install(target.dir, chain, {
-						dryRun,
-						platform: target.platform,
-						scope: target.scope,
-					});
-					console.log(chalk.green('✓ global updated'));
-					updated++;
-				} catch (err) {
-					console.error(chalk.red(`✗ Failed to update global: ${err.message}`));
+				if (userPresets.length === 0) continue;
+
+				for (const presetName of userPresets) {
+					console.log(
+						chalk.bold(
+							`\nUpdating ${chalk.cyan(presetName)} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
+						),
+					);
+					try {
+						await reinstallUserScopePresets(target.dir, [presetName], {
+							dryRun,
+							platform: target.platform,
+							scope: target.scope,
+						});
+						console.log(chalk.green(`✓ ${presetName} updated`));
+						updated++;
+					} catch (err) {
+						console.error(
+							chalk.red(`✗ Failed to update ${presetName}: ${err.message}`),
+						);
+					}
 				}
 			}
 

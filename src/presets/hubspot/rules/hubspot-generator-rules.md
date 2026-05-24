@@ -17,7 +17,7 @@ These rules apply to all Figma-to-HubSpot generation work (`/figma-to-hubspot` c
 When a Figma URL is provided **without** a `node-id` parameter, run the page module lister first:
 
 ```bash
-node .claude/skills/figma-asset-exporter/figma-asset-exporter/scripts/list-figma-modules.cjs \
+node .cursor/skills/aka-figma-to-code/scripts/list-figma-modules.cjs \
   --file-key {fileKey} --output ./output/{project-name}
 ```
 

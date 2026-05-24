@@ -3,6 +3,7 @@ import { readManifest } from '../core/manifest.js';
 import {
 	SUPPORTED_PLATFORMS,
 	resolveTargetDirs,
+	formatScopeContext,
 } from '../core/platforms.js';
 
 /**
@@ -33,14 +34,13 @@ export function registerListCommand(program) {
 
 			let anyFound = false;
 
-			// Project-scope installs
 			for (const target of targetSet.projectDirs) {
 				const manifest = readManifest(target.dir);
 				if (!manifest || Object.keys(manifest.presets).length === 0) continue;
 				anyFound = true;
 				console.log(
 					chalk.cyan(`  Project [${target.platform}]`) +
-						chalk.dim(` (${target.dir})`),
+						chalk.dim(` (${formatScopeContext(target.scope, target.platform)})`),
 				);
 				for (const [name, info] of Object.entries(manifest.presets)) {
 					console.log(
@@ -50,19 +50,19 @@ export function registerListCommand(program) {
 				console.log('');
 			}
 
-			// Global-scope installs
 			for (const target of targetSet.globalDirs) {
 				const manifest = readManifest(target.dir);
-				if (!manifest?.presets?.global) continue;
+				if (!manifest || Object.keys(manifest.presets).length === 0) continue;
 				anyFound = true;
-				const info = manifest.presets.global;
 				console.log(
-					chalk.cyan(`  Global [${target.platform}]`) +
-						chalk.dim(` (${target.dir})`),
+					chalk.cyan(`  User-scope [${target.platform}]`) +
+						chalk.dim(` (${formatScopeContext(target.scope, target.platform)})`),
 				);
-				console.log(
-					`    ${chalk.green('●')} global ${chalk.dim(`v${info.version}`)}`,
-				);
+				for (const [name, info] of Object.entries(manifest.presets)) {
+					console.log(
+						`    ${chalk.green('●')} ${name} ${chalk.dim(`v${info.version}`)}`,
+					);
+				}
 				console.log('');
 			}
 

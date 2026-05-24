@@ -27,7 +27,7 @@ Enable plugins from the aka-kit catalog (`docs/plugin-catalog.md`).
 ## Workflow
 
 1. **Identify plugin** — match user request to catalog (`docs/plugin-catalog.md`)
-2. **Verify marketplace** — check `.claude/settings.json`:
+2. **Verify marketplace** — check agent settings (Claude Code: `.claude/settings.json`; Cursor: use MCP/skills catalog):
    - `extraKnownMarketplaces` contains marketplace source
    - If missing → user should re-run `aka-kit install` or `aka-kit update`
 3. **Enable plugin** — set in `enabledPlugins`:

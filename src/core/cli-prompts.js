@@ -7,6 +7,8 @@ import {
 	presetDisplayName,
 	PROJECT_PRESET_NAMES,
 } from './project-detector.js';
+import { getPlatformProfile } from './platform-profiles.js';
+import { expandPlatform, userScopeDirsHint } from './platforms.js';
 
 export const PLATFORM_CHOICES = [
 	{
@@ -107,12 +109,22 @@ export async function pickPresetInteractive() {
 	return preset;
 }
 
-export async function confirmGlobalPreset() {
+export async function confirmGlobalPreset(platform = 'claude') {
+	const dirs = userScopeDirsHint(platform);
+	const detail = expandPlatform(platform)
+		.map((p) => {
+			const prof = getPlatformProfile(p);
+			if (prof.supportsHooks) return `${prof.label}: hooks + rules`;
+			if (prof.ruleFormat === 'mdc') return `${prof.label}: rules (.mdc)`;
+			return `${prof.label}: rules (reference)`;
+		})
+		.join('; ');
+
 	const { includeGlobal } = await prompts(
 		{
 			type: 'confirm',
 			name: 'includeGlobal',
-			message: 'Also install global user-scope preset (~/.claude hooks/rules)?',
+			message: `Also install user-scope preset (${dirs})? ${detail}`,
 			initial: true,
 		},
 		{ onCancel: () => process.exit(130) },

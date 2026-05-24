@@ -113,7 +113,7 @@ export function graphifyMcpImportOk(pythonBin) {
 	});
 }
 
-/** Resolve .mcp.json path: project target → ~/.cursor → ~/.claude.json */
+/** Resolve .mcp.json path: project target → ~/.cursor → ~/.claude.json (legacy) */
 export function resolveMcpConfigPaths(targetDir, platform) {
 	const paths = [];
 	if (targetDir && fs.existsSync(targetDir)) {
@@ -123,6 +123,8 @@ export function resolveMcpConfigPaths(targetDir, platform) {
 	if (platform === 'cursor' || fs.existsSync(path.join(home, '.cursor'))) {
 		paths.push(path.join(home, '.cursor', '.mcp.json'));
 	}
-	paths.push(path.join(home, '.claude.json'));
+	if (platform === 'claude' || fs.existsSync(path.join(home, '.claude'))) {
+		paths.push(path.join(home, '.claude', '.mcp.json'));
+	}
 	return [...new Set(paths)];
 }

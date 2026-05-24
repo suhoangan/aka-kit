@@ -14,7 +14,7 @@ aka-kit pins external package and git refs used by MCP config and install script
 | `@tanstack/intent`        | `0.0.41`  | `nextjs/scripts/install-tanstack-intent.sh`         |
 | `claude-mem`              | `13.3.0`  | `dependency-scripts/install-claude-mem.mjs`         |
 | `code-review-graph`       | (PyPI)    | `dependency-scripts/install-prerequisites.mjs`      |
-| `graphify[mcp]`           | `0.8.17`  | `install-prerequisites.mjs`, `install-graphify.mjs` |
+| `graphify[mcp]`           | `0.8.17`  | `dependency-scripts/install-prerequisites.mjs`, `install-graphify.mjs` |
 | `@playwright/mcp`         | `0.0.75`  | `install-mcp-cache.mjs`                             |
 | `agent-browser-mcp`       | `0.1.3`   | `install-mcp-cache.mjs`                             |
 | `@vkhanhqui/figma-mcp-go` | `0.1.3`   | `install-mcp-cache.mjs`                             |

@@ -7,6 +7,7 @@ import {
 	mergePermissions,
 	removePermissionEntries,
 } from './settings-merger.js';
+import { shouldMergePermissions } from './platform-artifacts.js';
 
 function skillPermissionForSlug(slug) {
 	const short = slug.replace(/^aka-/, '');
@@ -17,7 +18,7 @@ function skillPermissionForSlug(slug) {
  * Add a single bundled skill to target .claude/ (or .cursor/).
  */
 export async function addSkill(targetDir, query, options = {}) {
-	const { dryRun = false } = options;
+	const { dryRun = false, platform = 'claude' } = options;
 	const entry = findSkill(query);
 	if (!entry) {
 		throw new Error(
@@ -40,9 +41,11 @@ export async function addSkill(targetDir, query, options = {}) {
 	fs.copySync(entry.path, dst, { overwrite: true });
 	console.log(`  ${chalk.green('+')} skill: ${entry.slug}`);
 
-	mergePermissions(targetDir, {
-		allow: [skillPermissionForSlug(entry.slug)],
-	});
+	if (shouldMergePermissions(platform)) {
+		mergePermissions(targetDir, {
+			allow: [skillPermissionForSlug(entry.slug)],
+		});
+	}
 
 	const manifest = readManifest(targetDir) || { version: '0.1.0', presets: {} };
 	if (!manifest.extras) manifest.extras = { skills: [] };
@@ -57,7 +60,7 @@ export async function addSkill(targetDir, query, options = {}) {
  * Remove a skill directory and optional permission entry.
  */
 export async function removeSkill(targetDir, query, options = {}) {
-	const { dryRun = false } = options;
+	const { dryRun = false, platform = 'claude' } = options;
 	const slug = normalizeSkillSlug(query);
 	const relPath = `skills/${slug}`;
 	const fullPath = path.join(targetDir, relPath);
@@ -74,7 +77,9 @@ export async function removeSkill(targetDir, query, options = {}) {
 	fs.removeSync(fullPath);
 	console.log(`  ${chalk.red('-')} ${relPath}`);
 
-	removePermissionEntries(targetDir, [skillPermissionForSlug(slug)]);
+	if (shouldMergePermissions(platform)) {
+		removePermissionEntries(targetDir, [skillPermissionForSlug(slug)]);
+	}
 
 	const manifest = readManifest(targetDir);
 	if (manifest?.extras?.skills) {

@@ -4,6 +4,7 @@ import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
 	resolveTargetDirs,
+	formatScopeContext,
 } from '../core/platforms.js';
 
 const PRESET_FLAGS = [
@@ -11,6 +12,7 @@ const PRESET_FLAGS = [
 	'hubspot',
 	'php',
 	'global',
+	'shared',
 	'turboStrapiNextjs',
 	'fullstackNextjs',
 	'nodeBackend',
@@ -21,6 +23,8 @@ const PRESET_NAME_MAP = {
 	fullstackNextjs: 'fullstack-nextjs',
 	nodeBackend: 'node-backend',
 };
+
+const USER_SCOPE_PRESETS = new Set(['global', 'shared']);
 
 /**
  * Register the uninstall command.
@@ -33,7 +37,14 @@ export function registerUninstallCommand(program) {
 		.option('--nextjs', 'Uninstall Next.js preset')
 		.option('--hubspot', 'Uninstall HubSpot preset')
 		.option('--php', 'Uninstall PHP preset')
-		.option('--global', 'Uninstall global user-scope preset')
+		.option(
+			'--global',
+			'Uninstall user-scope global preset (~/.claude, ~/.cursor, or ~/.codex)',
+		)
+		.option(
+			'--shared',
+			'Uninstall user-scope shared preset (skills/rules/MCP from aka-kit)',
+		)
 		.option('--turbo-strapi-nextjs', 'Uninstall turbo-strapi-nextjs preset')
 		.option('--fullstack-nextjs', 'Uninstall fullstack-nextjs preset')
 		.option('--node-backend', 'Uninstall node-backend preset')
@@ -63,6 +74,10 @@ export function registerUninstallCommand(program) {
 						'No preset selected. Specify which preset to uninstall.',
 					),
 				);
+				console.log('');
+				console.log('  aka-kit uninstall --nextjs --platform cursor');
+				console.log('  aka-kit uninstall --shared --platform cursor');
+				console.log('  aka-kit uninstall --global --platform claude');
 				process.exit(1);
 			}
 
@@ -70,13 +85,14 @@ export function registerUninstallCommand(program) {
 
 			for (const flagKey of selected) {
 				const presetName = PRESET_NAME_MAP[flagKey] || flagKey;
-				const targets =
-					flagKey === 'global' ? targetSet.globalDirs : targetSet.projectDirs;
+				const targets = USER_SCOPE_PRESETS.has(presetName)
+					? targetSet.globalDirs
+					: targetSet.projectDirs;
 
 				for (const target of targets) {
 					console.log(
 						chalk.bold(
-							`\nUninstalling ${chalk.cyan(presetName)} preset from ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
+							`\nUninstalling ${chalk.cyan(presetName)} from ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 						),
 					);
 

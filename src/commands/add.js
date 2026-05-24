@@ -34,7 +34,10 @@ export function registerAddCommand(program) {
 			for (const target of targets) {
 				console.log(chalk.dim(`  → ${target.dir} [${target.platform}]`));
 				try {
-					await addSkill(target.dir, skill, { dryRun: options.dryRun });
+					await addSkill(target.dir, skill, {
+						dryRun: options.dryRun,
+						platform: target.platform,
+					});
 				} catch (err) {
 					console.error(chalk.red(`✗ ${err.message}`));
 					process.exit(1);

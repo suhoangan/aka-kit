@@ -8,7 +8,17 @@ import {
 	mergePermissions,
 	resolveSettingsForTarget,
 } from './settings-merger.js';
-import { resolveMcpForPlatform } from './platform-profiles.js';
+import {
+	resolveMcpForPlatform,
+	getPlatformProfile,
+} from './platform-profiles.js';
+import {
+	prepareRuleArtifact,
+	ruleInstallPath,
+	shouldInstallArtifact,
+	shouldMergePermissions,
+	shouldMergeSettings,
+} from './platform-artifacts.js';
 import { readManifest, writeManifest } from './manifest.js';
 import { runDependencyScripts } from './dependency-runner.js';
 
@@ -18,6 +28,7 @@ import { runDependencyScripts } from './dependency-runner.js';
  */
 export async function install(targetDir, presetChain, options = {}) {
 	const { dryRun = false, platform = 'claude', scope = 'project' } = options;
+	const profile = getPlatformProfile(platform);
 	const installedFiles = [];
 	// The main preset is the last one in the chain
 	const mainPreset = presetChain[presetChain.length - 1];
@@ -28,8 +39,13 @@ export async function install(targetDir, presetChain, options = {}) {
 	for (const preset of presetChain) {
 		installArtifacts(targetDir, preset, installedFiles, dryRun, platform);
 
-		// Merge settings.json entries (no-op on Codex — kept for reference)
-		if (preset.settings && Object.keys(preset.settings).length > 0 && !dryRun) {
+		// Merge settings.json (Claude Code only — hooks/plugins)
+		if (
+			preset.settings &&
+			Object.keys(preset.settings).length > 0 &&
+			shouldMergeSettings(platform) &&
+			!dryRun
+		) {
 			mergeSettings(
 				targetDir,
 				resolveSettingsForTarget(preset.settings, targetDir, platform),
@@ -39,12 +55,13 @@ export async function install(targetDir, presetChain, options = {}) {
 			);
 		}
 
-		// Merge permissions (allow / deny / ask)
+		// Merge permissions (Claude Code only)
 		if (
 			preset.permissions &&
 			(preset.permissions.allow?.length ||
 				preset.permissions.deny?.length ||
 				preset.permissions.ask?.length) &&
+			shouldMergePermissions(platform) &&
 			!dryRun
 		) {
 			mergePermissions(targetDir, preset.permissions);
@@ -61,7 +78,9 @@ export async function install(targetDir, presetChain, options = {}) {
 				);
 			} else {
 				mergeMcpConfig(targetDir, mcp);
-				console.log(`  ${chalk.green('+')} .mcp.json merged (${preset.name})`);
+				console.log(
+					`  ${chalk.green('+')} .mcp.json merged (${preset.name}) [${profile.label}]`,
+				);
 			}
 		}
 
@@ -162,24 +181,33 @@ function installArtifacts(
 		installedFiles.push(`skills/${skillDir}`);
 	}
 
-	// Copy rules
+	// Copy rules (platform format: .md for Claude, .mdc for Cursor)
 	for (const ruleFile of preset.artifacts?.rules || []) {
+		if (!shouldInstallArtifact('rules', platform)) continue;
+
 		const src = path.join(preset._dir, 'rules', ruleFile);
-		const dst = path.join(targetDir, 'rules', ruleFile);
 		if (!fs.existsSync(src)) continue;
 
+		const { dstName, body } = prepareRuleArtifact(ruleFile, src, platform);
+		const dst = ruleInstallPath(targetDir, dstName);
+
 		if (dryRun) {
-			console.log(chalk.dim(`  [dry-run] Would copy rule: ${ruleFile}`));
+			console.log(
+				chalk.dim(
+					`  [dry-run] Would copy rule: ${ruleFile} → rules/${dstName}`,
+				),
+			);
 		} else {
 			fs.ensureDirSync(path.dirname(dst));
-			fs.copySync(src, dst, { overwrite: true });
-			console.log(`  ${chalk.green('+')} rule: ${ruleFile}`);
+			fs.writeFileSync(dst, body, 'utf8');
+			console.log(`  ${chalk.green('+')} rule: ${dstName}`);
 		}
-		installedFiles.push(`rules/${ruleFile}`);
+		installedFiles.push(`rules/${dstName}`);
 	}
 
-	// Copy hook scripts
+	// Copy hook scripts (Claude Code only)
 	for (const hookFile of preset.artifacts?.hooks || []) {
+		if (!shouldInstallArtifact('hooks', platform)) continue;
 		const src = path.join(preset._dir, 'hooks', hookFile);
 		const dst = path.join(targetDir, 'hooks', hookFile);
 		if (!fs.existsSync(src)) continue;

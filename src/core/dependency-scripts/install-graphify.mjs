@@ -33,7 +33,7 @@ const profile = getPlatformProfile(platform);
 ensureCoreToolchain();
 
 if (scope === 'global') {
-	log(`skipping project graphify on global ${profile.configDir} install`);
+	log(`skipping project graphify on user-scope ${profile.configDir} install`);
 	process.exit(0);
 }
 

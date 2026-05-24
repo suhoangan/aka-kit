@@ -5,6 +5,8 @@ import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
 	resolveTargetDirs,
+	scopeLabel,
+	formatScopeContext,
 } from '../core/platforms.js';
 import {
 	pickPlatformInteractive,
@@ -20,7 +22,7 @@ import { setupRequiredEnv, applyEnvToMcpDirs } from '../core/env-setup.js';
 
 /**
  * Register the install command with Commander program.
- * Shared/common preset installs to user config dir (global scope).
+ * Shared/common preset installs to user config dir (user-scope).
  * Project presets install to CWD config dir (project scope).
  */
 export function registerInstallCommand(program) {
@@ -30,7 +32,10 @@ export function registerInstallCommand(program) {
 		.option('--nextjs', 'Install Next.js preset')
 		.option('--hubspot', 'Install HubSpot preset')
 		.option('--php', 'Install PHP preset')
-		.option('--global', 'Install global user-scope preset')
+		.option(
+			'--global',
+			'Install user-scope preset (~/.claude, ~/.cursor, or ~/.codex)',
+		)
 		.option(
 			'--turbo-strapi-nextjs',
 			'Install Turborepo + Strapi v5 + Next.js 15 preset',
@@ -87,7 +92,7 @@ export function registerInstallCommand(program) {
 				if (process.stdin.isTTY) {
 					const presetName = await pickProjectPresetInteractive();
 					selected.push(presetNameToFlag(presetName));
-					if (await confirmGlobalPreset()) {
+					if (await confirmGlobalPreset(platform)) {
 						selected.push('global');
 					}
 				} else {
@@ -120,11 +125,11 @@ export function registerInstallCommand(program) {
 				forceInteractive: options.forceInteractive || false,
 			});
 
-			// Step 1: Always install shared/common to all selected global targets
+			// Step 1: shared preset → user-scope dirs (~/.claude, ~/.cursor, …)
 			for (const target of targetSet.globalDirs) {
 				console.log(
 					chalk.bold(
-						`\nInstalling ${chalk.cyan('shared')} preset → ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
+						`\nInstalling ${chalk.cyan('shared')} preset → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 					),
 				);
 				try {
@@ -134,7 +139,11 @@ export function registerInstallCommand(program) {
 						platform: target.platform,
 						scope: target.scope,
 					});
-					console.log(chalk.green('✓ shared preset installed (global)'));
+					console.log(
+						chalk.green(
+							`✓ shared preset installed (${scopeLabel(target.scope)} · ${target.platform})`,
+						),
+					);
 				} catch (err) {
 					console.error(
 						chalk.red(`✗ Failed to install shared: ${err.message}`),
@@ -152,7 +161,7 @@ export function registerInstallCommand(program) {
 				for (const target of targets) {
 					console.log(
 						chalk.bold(
-							`\nInstalling ${chalk.cyan(presetName)} preset → ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
+							`\nInstalling ${chalk.cyan(presetName)} preset → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 						),
 					);
 

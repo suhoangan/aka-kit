@@ -51,11 +51,19 @@ try {
  * One-time cleanup for orphaned .shadowed/ directories from skill-dedup hook (Issue #422)
  * The hook was disabled due to race conditions; this restores any orphaned skills.
  */
+function projectAgentDir() {
+  const cwd = process.cwd();
+  if (fs.existsSync(path.join(cwd, '.cursor', 'skills'))) return '.cursor';
+  if (fs.existsSync(path.join(cwd, '.claude', 'skills'))) return '.claude';
+  return '.claude';
+}
+
 function cleanupOrphanedShadowedSkills() {
-  const shadowedDir = path.join(process.cwd(), '.claude', 'skills', '.shadowed');
+  const agentDir = projectAgentDir();
+  const shadowedDir = path.join(process.cwd(), agentDir, 'skills', '.shadowed');
   if (!fs.existsSync(shadowedDir)) return { restored: [], skipped: [], kept: [] };
 
-  const skillsDir = path.join(process.cwd(), '.claude', 'skills');
+  const skillsDir = path.join(process.cwd(), agentDir, 'skills');
   const restored = [];
   const skipped = [];
   const kept = []; // Skills kept for manual review (content differs)

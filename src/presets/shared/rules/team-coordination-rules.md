@@ -87,6 +87,6 @@ When `plan_mode_required` is set:
 
 ## Discovery
 
-- Read team config at `~/.claude/teams/{team-name}/config.json` to discover teammates
+- Read team config at `~/.claude/teams/{team-name}/config.json` (Claude Code Agent Teams) to discover teammates
 - Always refer to teammates by NAME (not agent ID)
 - Names are used for: `recipient` in SendMessage, task `owner` in TaskUpdate

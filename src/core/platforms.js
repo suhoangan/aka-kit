@@ -1,5 +1,6 @@
 import path from 'path';
 import os from 'os';
+import { getPlatformProfile } from './platform-profiles.js';
 
 export const SUPPORTED_PLATFORMS = ['claude', 'cursor', 'codex', 'both', 'all'];
 export const DEFAULT_PLATFORM = 'claude';
@@ -9,6 +10,29 @@ const PLATFORM_DIRS = {
 	cursor: '.cursor',
 	codex: '.codex',
 };
+
+/** User-facing scope label (internal value stays `global` | `project`). */
+export function scopeLabel(scope) {
+	return scope === 'global' ? 'user-scope' : 'project';
+}
+
+/** e.g. "user-scope · Cursor (~/.cursor)" or "project · Cursor (<cwd>/.cursor)" */
+export function formatScopeContext(scope, platform) {
+	const profile = getPlatformProfile(platform);
+	const label = scopeLabel(scope);
+	if (scope === 'global') {
+		const homeDir = path.join(os.homedir(), profile.configDir);
+		return `${label} · ${profile.label} (${homeDir})`;
+	}
+	return `${label} · ${profile.label} (<cwd>/${profile.configDir})`;
+}
+
+/** Comma-separated user config dirs for prompts, e.g. ~/.cursor or ~/.claude, ~/.cursor */
+export function userScopeDirsHint(platform) {
+	return expandPlatform(platform)
+		.map((p) => `~/${PLATFORM_DIRS[p]}`)
+		.join(', ');
+}
 
 /**
  * Expand a platform alias into its concrete platform list.

@@ -1,6 +1,6 @@
 # Permissions Policy
 
-aka-kit merges **allow**, **deny**, and **ask** rules into `.claude/settings.json` (or `.cursor/settings.json`) on install.
+aka-kit merges **allow**, **deny**, and **ask** rules into `.claude/settings.json` on install (**Claude Code only**). Cursor uses `.cursor/rules/*.mdc`; Codex uses reference rules under `.codex/rules/`.
 
 ## Evaluation order
 

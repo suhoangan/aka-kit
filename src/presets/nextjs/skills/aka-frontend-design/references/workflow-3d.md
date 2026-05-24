@@ -10,9 +10,9 @@ Create immersive interactive 3D designs with Three.js.
 ## Initial Research
 Run `ck:ui-ux-pro-max` searches:
 ```bash
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "<product-type>" --domain product
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "immersive 3d" --domain style
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "animation" --domain ux
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "<product-type>" --domain product
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "immersive 3d" --domain style
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "animation" --domain ux
 ```
 
 ## Workflow Steps

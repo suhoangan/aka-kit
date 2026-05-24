@@ -6,6 +6,7 @@ import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
 	resolveTargetDirs,
+	formatScopeContext,
 } from '../core/platforms.js';
 import {
 	pickPlatformInteractive,
@@ -36,7 +37,7 @@ export function registerInitCommand(program) {
 				? options.platform.toLowerCase()
 				: await pickPlatformInteractive();
 			const preset = await pickProjectPresetInteractive();
-			const includeGlobal = await confirmGlobalPreset();
+			const includeGlobal = await confirmGlobalPreset(platform);
 			const dryRun = options.dryRun ?? (await confirmDryRun());
 
 			if (!SUPPORTED_PLATFORMS.includes(platform)) {
@@ -63,7 +64,7 @@ export function registerInitCommand(program) {
 			for (const target of targetSet.globalDirs) {
 				console.log(
 					chalk.bold(
-						`\nInstalling ${chalk.cyan('shared')} → ${chalk.dim(target.dir)}`,
+						`\nInstalling ${chalk.cyan('shared')} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 					),
 				);
 				const sharedChain = resolvePresets('shared');
@@ -80,7 +81,7 @@ export function registerInitCommand(program) {
 				for (const target of targets) {
 					console.log(
 						chalk.bold(
-							`\nInstalling ${chalk.cyan(name)} → ${chalk.dim(target.dir)}`,
+							`\nInstalling ${chalk.cyan(name)} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 						),
 					);
 					const chain = resolvePresets(name);

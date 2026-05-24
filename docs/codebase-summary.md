@@ -23,7 +23,7 @@ One file per CLI verb. Each exports a `register<Name>Command(program)` function 
 | File           | Verb        | Purpose                                              |
 | -------------- | ----------- | ---------------------------------------------------- |
 | `install.js`   | `install`   | Resolve preset chain → call core installer           |
-| `uninstall.js` | `uninstall` | Read manifest → remove files → rewrite settings      |
+| `uninstall.js` | `uninstall` | Read manifest → remove artifacts (MCP/settings merges not reverted) |
 | `list.js`      | `list`      | Show installed presets per platform                  |
 | `update.js`    | `update`    | Re-install presets with latest version               |
 | `presets.js`   | `presets`   | List available presets                               |
@@ -39,7 +39,7 @@ Reusable logic shared by commands.
 | `preset-resolver.js`   | Walks `includes:` chain (e.g. `nextjs → shared`), returns ordered preset list                               |
 | `settings-merger.js`   | `mergeSettings`, `mergeMcpConfig` (JSON), `mergeMcpConfigToml` (Codex), `mergePermissions`                  |
 | `manifest.js`          | Read/write `.aka-kit.json` (legacy `.akakit.json`; tracks installed presets per target)                     |
-| `platforms.js`         | `resolveTargetDirs(platform)` for claude/cursor/codex/both/all                                              |
+| `platforms.js`         | `resolveTargetDirs(platform)`, user-scope labels, scope formatting                                          |
 | `dependency-runner.js` | Run `dependencies.scripts` via cross-platform Node (`.mjs` in `dependency-scripts/`), bash fallback on Unix |
 | `doctor-checks/*.js`   | One module per check category (binaries, node, mcp-config, skills, permissions, env-vars)                   |
 
@@ -51,10 +51,10 @@ Each subdir is a self-contained preset.
 <preset>/
 ├── preset.json              # Contract — declares artifacts, permissions, settings, mcp, dependencies
 ├── skills/                  # Each subdir is one skill with SKILL.md + optional refs/scripts
-├── rules/                   # Plain .md files copied into <target>/.claude/rules/
-├── hooks/                   # .cjs files copied into <target>/.claude/hooks/
+├── rules/                   # `.md` → copied as `.md` (Claude) or `.mdc` (Cursor) under `<target>/rules/`
+├── hooks/                   # Claude Code only — `.cjs` → `<target>/hooks/`
 ├── templates/               # Copied into project root (CLAUDE.md, AGENTS.md, etc.)
-└── scripts/                 # Bash install scripts executed by dependency-runner
+└── scripts/                 # Legacy `.sh`; dependency-runner prefers `src/core/dependency-scripts/*.mjs`
 ```
 
 ### Preset inheritance
@@ -63,8 +63,8 @@ Each subdir is a self-contained preset.
 
 | Preset              | Includes | Adds                                                           |
 | ------------------- | -------- | -------------------------------------------------------------- |
-| shared              | —        | 12 skills, 4 rules, MCP servers, plugins, auto-install scripts |
-| global              | —        | Global hooks, primary-workflow / orchestration rules           |
+| shared              | —        | 31 skills, 10 rules, MCP servers, plugins, auto-install (Node `.mjs`)          |
+| global              | —        | Claude hooks + rules; Cursor/Codex get rules only                              |
 | nextjs              | shared   | 6 frontend skills, tanstack-intent script                      |
 | php                 | shared   | 4 backend skills                                               |
 | hubspot             | shared   | 3 hubspot skills, hubspot rules                                |
@@ -80,7 +80,7 @@ Each subdir is a self-contained preset.
 		"nextjs": {
 			"version": "0.1.0",
 			"installedAt": "2026-05-24T13:30:00Z",
-			"files": [".claude/skills/aka-git/SKILL.md", "..."]
+			"artifacts": ["skills/aka-git", "rules/development-rules.md", "..."]
 		}
 	}
 }
@@ -90,8 +90,8 @@ Used by `uninstall` to safely remove only files this preset wrote, and by `list`
 
 ## Settings merge strategy
 
-- `.claude/settings.json` — deep-merged. Arrays union by stringified equality.
-- `.claude/.mcp.json` — `mcpServers.*` merged, existing entries preserved unless preset explicitly overrides.
+- `<target>/settings.json` — deep-merged (Claude Code only). Arrays union by stringified equality.
+- `<target>/.mcp.json` — `mcpServers.*` merged (Claude/Cursor).
 - `~/.codex/config.toml` — `[mcp_servers.NAME]` tables merged. Existing tables preserved.
 - `permissions.allow` — union, deduplicated.
 - Before each merge: write `<file>.bak.<ISO-timestamp>`.

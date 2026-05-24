@@ -19,7 +19,7 @@ const profile = getPlatformProfile(platform);
 const pkgPath = path.join(process.cwd(), 'package.json');
 
 if (scope === 'global') {
-	log(`skipping tanstack-intent on global ${profile.configDir} install`);
+	log(`skipping tanstack-intent on user-scope ${profile.configDir} install`);
 	process.exit(0);
 }
 

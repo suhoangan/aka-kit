@@ -12,9 +12,9 @@ aka-kit install --nextjs --global    # combine project + global
 
 ## Adds
 
-- **2 rules** — primary-workflow.md, orchestration-protocol.md
-- **5 hooks** — session-init, dev-rules-reminder, privacy-block, descriptive-name, usage-context-awareness
-- **Hook wiring** in settings.json (SessionStart, UserPromptSubmit, PreToolUse)
+- **2 rules** — primary-workflow, orchestration-protocol (`.mdc` on Cursor)
+- **5 hooks** — Claude Code only (session-init, dev-rules-reminder, privacy-block, descriptive-name, usage-context-awareness)
+- **Hook wiring** in `settings.json` (Claude Code only — SessionStart, UserPromptSubmit, PreToolUse)
 
 ## When to use
 

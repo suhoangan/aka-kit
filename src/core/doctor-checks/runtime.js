@@ -41,7 +41,7 @@ const BINARIES = [
 		name: 'rtk',
 		level: 'recommended',
 		detail: 'Rust Token Killer — saves 60–90% tokens',
-		fix: 'scripts/install-rtk.sh',
+		fix: 'aka-kit install (auto) — install-rtk.mjs',
 	},
 	{
 		name: 'code-review-graph',
@@ -53,7 +53,7 @@ const BINARIES = [
 		name: 'graphify',
 		level: 'recommended',
 		detail: 'knowledge graph MCP (graphify-out/graph.json)',
-		fix: 'pipx install graphify[mcp] && graphify install',
+		fix: 'aka-kit install (auto) or uv tool install "graphify[mcp]"',
 	},
 	{
 		name: 'pipx',
@@ -83,7 +83,7 @@ const BINARIES = [
 		name: 'agent-browser',
 		level: 'optional',
 		detail: 'AI browser automation',
-		fix: 'scripts/install-agent-browser.sh',
+		fix: 'aka-kit install (auto) — install-agent-browser.mjs',
 	},
 	{
 		name: 'gh',

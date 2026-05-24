@@ -3,6 +3,8 @@
  * Global ~/.cursor must not run project-only steps (graphify, speckit, graph-init).
  */
 
+import { getPlatformProfile } from '../../platform-profiles.js';
+
 /** IDE hook installers — user scope only (~/.cursor, ~/.claude). */
 export const GLOBAL_SCOPE_ONLY_SCRIPTS = new Set(['install-claude-mem']);
 
@@ -42,6 +44,13 @@ export function shouldRunDependencyScript(scriptBase, context = {}) {
 	}
 
 	if (GLOBAL_SCOPE_ONLY_SCRIPTS.has(scriptBase) && scope === 'project') {
+		return false;
+	}
+
+	if (
+		scriptBase === 'install-claude-mem' &&
+		!getPlatformProfile(platform).supportsClaudeMem
+	) {
 		return false;
 	}
 

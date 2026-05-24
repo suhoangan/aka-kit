@@ -8,10 +8,10 @@ Create award-quality designs with storytelling, 3D experiences, and micro-intera
 ## Initial Research
 Run `ck:ui-ux-pro-max` searches:
 ```bash
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "<product-type>" --domain product
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "<style-keywords>" --domain style
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "<mood>" --domain typography
-python3 $HOME/.claude/skills/ui-ux-pro-max/scripts/search.py "<industry>" --domain color
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "<product-type>" --domain product
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "<style-keywords>" --domain style
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "<mood>" --domain typography
+python3 ~/.cursor/skills/aka-ui-styling/scripts/search.py "<industry>" --domain color
 ```
 
 ## Workflow Steps

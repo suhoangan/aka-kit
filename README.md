@@ -258,11 +258,11 @@ Every **project** install (in a git repo) auto-runs:
 
 Prerequisites are **auto-installed** on `aka-kit install` (Windows + macOS). Each platform gets its own config:
 
-| Platform | Config dir | MCP file      | spec-kit integration | Serena context  |
-| -------- | ---------- | ------------- | -------------------- | --------------- |
-| Claude   | `.claude/` | `.mcp.json`   | `claude`             | `claude-code`   |
-| Cursor   | `.cursor/` | `.mcp.json`   | `cursor-agent`       | `ide-assistant` |
-| Codex    | `.codex/`  | `config.toml` | `codex`              | `ide-assistant` |
+| Platform | Config dir | Rules format       | MCP           | Hooks / permissions | spec-kit       |
+| -------- | ---------- | ------------------ | ------------- | ------------------- | -------------- |
+| Claude   | `.claude/` | `rules/*.md`       | `.mcp.json`   | settings.json       | `claude`       |
+| Cursor   | `.cursor/` | `rules/*.mdc`      | `.mcp.json`   | skipped (use rules) | `cursor-agent` |
+| Codex    | `.codex/`  | `rules/*.md` (ref) | `config.toml` | skipped             | `codex`        |
 
 Project-only steps (graphify, spec-kit, graph-init) run in `<cwd>/.cursor` — not on global `~/.cursor` skill install.
 

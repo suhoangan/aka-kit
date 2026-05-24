@@ -24,7 +24,7 @@ const platform = (process.env.AKAKIT_PLATFORM || 'claude').toLowerCase();
 const profile = getPlatformProfile(platform);
 
 if (scope === 'global') {
-	log(`skipping graph-init on global ${profile.configDir} install`);
+	log(`skipping graph-init on user-scope ${profile.configDir} install`);
 	process.exit(0);
 }
 

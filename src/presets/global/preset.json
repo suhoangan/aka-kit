@@ -1,72 +1,69 @@
 {
-  "name": "global",
-  "description": "User-scope productivity skills, hooks, and rules for ~/.claude/",
-  "includes": [],
-  "artifacts": {
-    "skills": [],
-    "rules": [
-      "primary-workflow.md",
-      "orchestration-protocol.md"
-    ],
-    "hooks": [
-      "session-init.cjs",
-      "dev-rules-reminder.cjs",
-      "privacy-block.cjs",
-      "descriptive-name.cjs",
-      "usage-context-awareness.cjs"
-    ]
-  },
-  "settings": {
-    "hooks": {
-      "SessionStart": [
-        {
-          "matcher": "startup|resume|clear|compact",
-          "hooks": [
-            {
-              "type": "command",
-              "command": "node \"$HOME/.claude/hooks/session-init.cjs\""
-            }
-          ]
-        }
-      ],
-      "UserPromptSubmit": [
-        {
-          "hooks": [
-            {
-              "type": "command",
-              "command": "node \"$HOME/.claude/hooks/dev-rules-reminder.cjs\""
-            },
-            {
-              "type": "command",
-              "command": "node \"$HOME/.claude/hooks/usage-context-awareness.cjs\"",
-              "timeout": 30
-            }
-          ]
-        }
-      ],
-      "PreToolUse": [
-        {
-          "matcher": "Write",
-          "hooks": [
-            {
-              "type": "command",
-              "command": "node \"$HOME/.claude/hooks/descriptive-name.cjs\""
-            }
-          ]
-        },
-        {
-          "matcher": "Bash|Glob|Grep|Read|Edit|Write",
-          "hooks": [
-            {
-              "type": "command",
-              "command": "node \"$HOME/.claude/hooks/privacy-block.cjs\""
-            }
-          ]
-        }
-      ]
-    }
-  },
-  "dependencies": {
-    "scripts": []
-  }
+	"name": "global",
+	"description": "User-scope productivity rules and hooks (~/.claude, ~/.cursor, or ~/.codex per --platform)",
+	"includes": [],
+	"artifacts": {
+		"skills": [],
+		"rules": ["primary-workflow.md", "orchestration-protocol.md"],
+		"hooks": [
+			"session-init.cjs",
+			"dev-rules-reminder.cjs",
+			"privacy-block.cjs",
+			"descriptive-name.cjs",
+			"usage-context-awareness.cjs"
+		]
+	},
+	"settings": {
+		"hooks": {
+			"SessionStart": [
+				{
+					"matcher": "startup|resume|clear|compact",
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/session-init.cjs\""
+						}
+					]
+				}
+			],
+			"UserPromptSubmit": [
+				{
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/dev-rules-reminder.cjs\""
+						},
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/usage-context-awareness.cjs\"",
+							"timeout": 30
+						}
+					]
+				}
+			],
+			"PreToolUse": [
+				{
+					"matcher": "Write",
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/descriptive-name.cjs\""
+						}
+					]
+				},
+				{
+					"matcher": "Bash|Glob|Grep|Read|Edit|Write",
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/privacy-block.cjs\""
+						}
+					]
+				}
+			]
+		}
+	},
+	"dependencies": {
+		"scripts": []
+	}
 }

@@ -21,7 +21,7 @@ const scope = process.env.AKAKIT_SCOPE || 'project';
 const profile = getPlatformProfile(platform);
 
 if (scope === 'global') {
-	log(`skipping spec-kit init on global ${profile.configDir} install`);
+	log(`skipping spec-kit init on user-scope ${profile.configDir} install`);
 	process.exit(0);
 }
 

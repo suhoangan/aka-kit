@@ -63,7 +63,7 @@ chrome__get_content → extract DOM/text to verify rendered output matches expec
 When Chrome MCP is not configured, use `ck:chrome-devtools` skill (Puppeteer with bundled Chromium):
 
 ```bash
-SKILL_DIR="$HOME/.claude/skills/chrome-devtools/scripts"
+SKILL_DIR="$HOME/.cursor/skills/aka-chrome-devtools/scripts"  # or ~/.claude/skills/...
 
 # Install deps if first time
 npm install --prefix "$SKILL_DIR" 2>/dev/null

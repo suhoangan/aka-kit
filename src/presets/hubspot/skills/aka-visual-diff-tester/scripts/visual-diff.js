@@ -159,8 +159,12 @@ async function main() {
       puppeteer = require('puppeteer');
     } catch (e2) {
       var execSync = require('child_process').execSync;
-      console.log('Installing dependencies...');
-      execSync('bash ' + path.resolve(__dirname, '../../../install.sh'), { stdio: 'inherit' });
+      console.log('Installing dependencies (npm)...');
+      execSync('npm install puppeteer pngjs pixelmatch --no-save', {
+        cwd: path.resolve(__dirname, '..'),
+        stdio: 'inherit',
+        shell: true,
+      });
       puppeteer = require(path.join(skillsNodeModules, 'puppeteer'));
     }
   }
@@ -210,7 +214,11 @@ async function main() {
     } catch (e2) {
       var execSync2 = require('child_process').execSync;
       console.log('Installing dependencies...');
-      execSync2('bash ' + path.resolve(__dirname, '../../../install.sh'), { stdio: 'inherit' });
+      execSync2('npm install puppeteer pngjs pixelmatch --no-save', {
+        cwd: path.resolve(__dirname, '..'),
+        stdio: 'inherit',
+        shell: true,
+      });
       PNG = require(path.join(skillsNodeModules, 'pngjs')).PNG;
       var _pm3 = require(path.join(skillsNodeModules, 'pixelmatch'));
       pixelmatch = _pm3.default || _pm3;

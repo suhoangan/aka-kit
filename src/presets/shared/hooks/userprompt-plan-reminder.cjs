@@ -55,7 +55,7 @@ failOpen(() => {
 
 	console.log(`
 \x1b[36mPlan reminder\x1b[0m: Non-trivial task detected — write \`plans/{YYMMDD-HHMM}-{slug}/plan.md\` before implementing.
-See \`.claude/rules/planning-rules.md\` (or \`.cursor/rules/planning-rules.md\`).
+See \`.claude/rules/planning-rules.md\` or \`.cursor/rules/planning-rules.mdc\`.
 `);
 	process.exit(0);
 });

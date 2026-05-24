@@ -88,31 +88,7 @@ export function writeClaudeMemSettings(geminiKey) {
 }
 
 /** Inject collected keys into platform MCP configs (local only — do not commit secrets). */
-export function applyEnvToMcpDirs(cwd, platform, vars) {
-	const platforms = expandPlatform(platform);
-	const dirs = platforms.map((p) => path.join(cwd, `.${p}`));
-	for (const dir of dirs) {
-		const mcpPath = path.join(dir, '.mcp.json');
-		if (!fs.existsSync(mcpPath)) continue;
-		let data;
-		try {
-			data = fs.readJsonSync(mcpPath);
-		} catch {
-			continue;
-		}
-		if (!data.mcpServers) continue;
-		let changed = false;
-
-		if (vars.CONTEXT7_API_KEY && data.mcpServers.context7?.headers) {
-			data.mcpServers.context7.headers.CONTEXT7_API_KEY = vars.CONTEXT7_API_KEY;
-			changed = true;
-		}
-
-		if (changed) {
-			fs.writeJsonSync(mcpPath, data, { spaces: 2 });
-		}
-	}
-}
+export { applyEnvToMcpDirs } from './env-mcp-patch.js';
 
 function loadExistingValues(cwd, requirements) {
 	const fromFile = parseEnvFile(path.join(cwd, '.env'));

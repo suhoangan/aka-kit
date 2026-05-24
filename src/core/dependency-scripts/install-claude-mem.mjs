@@ -13,7 +13,7 @@ const scope = process.env.AKAKIT_SCOPE || 'project';
 const profile = getPlatformProfile(platform);
 
 if (scope === 'project') {
-	log(`claude-mem hooks are global-only — skipping project ${profile.configDir}`);
+	log(`claude-mem is user-scope only — skipping project ${profile.configDir}`);
 	process.exit(0);
 }
 
@@ -28,7 +28,9 @@ augmentToolPath();
 // claude-mem hooks are user-level (~/.cursor, ~/.claude) — always install from $HOME
 const installCwd = os.homedir();
 
-log(`installing claude-mem@${VERSION} for ${profile.label} (global hooks)…`);
+log(
+	`installing claude-mem@${VERSION} for ${profile.label} (user-scope hooks)…`,
+);
 
 const ide = profile.claudeMemIde;
 
@@ -54,7 +56,9 @@ if (!runOk('npm', npmArgs, { cwd: installCwd, stdio: 'inherit' })) {
 	process.exit(0);
 }
 
-log(`claude-mem installed for ${profile.label} — restart ${profile.label} to load hooks`);
+log(
+	`claude-mem installed for ${profile.label} — restart ${profile.label} to load hooks`,
+);
 
 const startArgs = [
 	'exec',

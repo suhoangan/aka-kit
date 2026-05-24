@@ -13,11 +13,11 @@ function installDirs() {
 	const cwd = process.cwd();
 	return [
 		{ label: 'claude (project)', dir: path.join(cwd, '.claude') },
-		{ label: 'claude (global)', dir: path.join(home, '.claude') },
+		{ label: 'claude (user-scope)', dir: path.join(home, '.claude') },
 		{ label: 'cursor (project)', dir: path.join(cwd, '.cursor') },
-		{ label: 'cursor (global)', dir: path.join(home, '.cursor') },
+		{ label: 'cursor (user-scope)', dir: path.join(home, '.cursor') },
 		{ label: 'codex (project)', dir: path.join(cwd, '.codex') },
-		{ label: 'codex (global)', dir: path.join(home, '.codex') },
+		{ label: 'codex (user-scope)', dir: path.join(home, '.codex') },
 	];
 }
 
@@ -79,13 +79,20 @@ export function checkSkills() {
 	return results;
 }
 
-/**
- * Detect orphan permissions: Skill(aka:foo) declared in settings.json allow-list
- * but the corresponding skill directory doesn't exist.
- */
 export function checkPermissions() {
 	const results = [];
 	for (const loc of installDirs()) {
+		if (!loc.label.startsWith('claude')) {
+			results.push(
+				result(
+					'Permissions',
+					loc.label,
+					'skip',
+					'Claude Code permissions only',
+				),
+			);
+			continue;
+		}
 		const settingsFile = path.join(loc.dir, 'settings.json');
 		if (!fs.existsSync(settingsFile)) continue;
 		let allow;

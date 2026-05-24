@@ -22,7 +22,7 @@ Automated pixel-perfect comparison between generated HTML component and Figma de
 ## Usage
 
 ```bash
-node .claude/skills/visual-diff-tester/visual-diff-tester/scripts/visual-diff.js \
+node .cursor/skills/aka-visual-diff-tester/scripts/visual-diff.js \
   --component ./output/{module-name}/component/component.html \
   --design ./output/{module-name}/design/desktop.png \
   --output ./output/{module-name}/design \
