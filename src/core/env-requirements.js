@@ -9,9 +9,11 @@ export const ENV_REQUIREMENTS = [
 	{
 		key: 'CONTEXT7_API_KEY',
 		label: 'Context7 API key',
-		description: 'Docs MCP (context7) — free tier at context7.com',
+		description:
+			'Optional — docs MCP (context7); works without a key for many queries',
 		url: 'https://context7.com/dashboard',
-		required: true,
+		required: false,
+		doctorLevel: 'optional',
 		platforms: ['claude', 'cursor', 'codex'],
 		targets: ['project-env'],
 		mcpServer: 'context7',
@@ -29,9 +31,10 @@ export const ENV_REQUIREMENTS = [
 	{
 		key: 'CLAUDE_MEM_GEMINI_API_KEY',
 		label: 'Gemini API key',
-		description: 'claude-mem on Cursor (observation extraction)',
+		description: 'Optional — claude-mem on Cursor (observation extraction)',
 		url: 'https://aistudio.google.com/apikey',
-		required: true,
+		required: false,
+		doctorLevel: 'optional',
 		platforms: ['cursor'],
 		targets: ['claude-mem-settings'],
 		envAlias: 'GEMINI_API_KEY',

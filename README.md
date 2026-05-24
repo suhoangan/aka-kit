@@ -154,7 +154,7 @@ What it checks:
 - **MCP config** — parses `.mcp.json` (Claude/Cursor) and `~/.codex/config.toml` (Codex), validates structure
 - **Skills** — walks `<target>/skills/*/SKILL.md`, validates frontmatter (`name`, `description`)
 - **Permissions** — detects orphan `Skill(aka:foo)` entries in `settings.json` that lack a corresponding skill directory
-- **Env vars** — `CONTEXT7_API_KEY`
+- **Env vars** — optional: `CONTEXT7_API_KEY`, `FIGMA_API_KEY`, `GEMINI_API_KEY` (Cursor claude-mem)
 - **Connectivity** — plugin marketplaces (`--quick` skips)
 
 Open an issue with `aka-kit doctor --json` output if anything looks off.
@@ -186,14 +186,14 @@ aka-kit upgrade --check      # compare current vs latest without installing
 
 `shared` preset wires these MCP entries into `.claude/.mcp.json`:
 
-| Server              | Package / ref (pinned)          | Transport | Requires                                              |
-| ------------------- | ------------------------------- | --------- | ----------------------------------------------------- |
-| `playwright`        | `@playwright/mcp@0.0.75`        | npx       | Node                                                  |
-| `agent-browser`     | `agent-browser-mcp@0.1.3`       | npx       | Node; `agent-browser` CLI recommended                 |
-| `figma`             | `@vkhanhqui/figma-mcp-go@0.1.3` | npx       | Node + Figma desktop plugin                           |
-| `context7`          | HTTP endpoint                   | http      | `CONTEXT7_API_KEY` env var (free key at context7.com) |
-| `code-review-graph` | `code-review-graph` (PyPI)      | stdio     | `pipx install code-review-graph`                      |
-| `serena`            | `oraios/serena@v1.5.1`          | stdio     | `uvx` (`pipx install uv`)                             |
+| Server              | Package / ref (pinned)          | Transport | Requires                                   |
+| ------------------- | ------------------------------- | --------- | ------------------------------------------ |
+| `playwright`        | `@playwright/mcp@0.0.75`        | npx       | Node                                       |
+| `agent-browser`     | `agent-browser-mcp@0.1.3`       | npx       | Node; `agent-browser` CLI recommended      |
+| `figma`             | `@vkhanhqui/figma-mcp-go@0.1.3` | npx       | Node + Figma desktop plugin                |
+| `context7`          | HTTP endpoint                   | http      | `CONTEXT7_API_KEY` optional (context7.com) |
+| `code-review-graph` | `code-review-graph` (PyPI)      | stdio     | `pipx install code-review-graph`           |
+| `serena`            | `oraios/serena@v1.5.1`          | stdio     | `uvx` (`pipx install uv`)                  |
 
 `claude-mem` and `qmd` are enabled as **plugins** (via `enabledPlugins`), not MCP — installed automatically.
 

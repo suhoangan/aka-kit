@@ -170,9 +170,12 @@ export function checkEnvVars() {
 			const masked =
 				val.length > 6 ? `${val.slice(0, 3)}…${val.slice(-3)}` : '***';
 			results.push(result('Env vars', ev.name, 'ok', `set (${masked})`));
+		} else if (ev.level === 'optional') {
+			results.push(result('Env vars', ev.name, 'skip', 'not set (optional)'));
+		} else if (ev.level === 'required') {
+			results.push(result('Env vars', ev.name, 'error', 'not set', ev.detail));
 		} else {
-			const status = ev.level === 'required' ? 'error' : 'warn';
-			results.push(result('Env vars', ev.name, status, 'not set', ev.detail));
+			results.push(result('Env vars', ev.name, 'warn', 'not set', ev.detail));
 		}
 	}
 	return results;

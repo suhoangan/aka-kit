@@ -9,4 +9,4 @@ Do not use for: refactoring, writing scripts from scratch, debugging business lo
 3. `query-docs` with the selected library ID and the user's full question (not single words)
 4. Answer using the fetched docs
 
-Requires `CONTEXT7_API_KEY` in env (see `.env.example`). Free key at context7.com.
+Requires `CONTEXT7_API_KEY` in env for authenticated requests (optional — see `.env.example`). Free key at context7.com.
