@@ -118,6 +118,7 @@ export function registerInstallCommand(program) {
 					await install(target.dir, sharedChain, {
 						dryRun,
 						platform: target.platform,
+						scope: target.scope,
 					});
 					console.log(chalk.green('✓ shared preset installed (global)'));
 				} catch (err) {
@@ -159,6 +160,7 @@ export function registerInstallCommand(program) {
 						await install(target.dir, filtered, {
 							dryRun,
 							platform: target.platform,
+							scope: target.scope,
 						});
 						console.log(chalk.green(`✓ ${presetName} preset installed`));
 					} catch (err) {

@@ -25,8 +25,12 @@ export function registerUpdateCommand(program) {
 		.action(async (options) => {
 			const platform = (options.platform || DEFAULT_PLATFORM).toLowerCase();
 			if (!SUPPORTED_PLATFORMS.includes(platform)) {
-				console.error(chalk.red(`Invalid --platform value: ${options.platform}`));
-				console.error(chalk.dim(`Use one of: ${SUPPORTED_PLATFORMS.join(', ')}`));
+				console.error(
+					chalk.red(`Invalid --platform value: ${options.platform}`),
+				);
+				console.error(
+					chalk.dim(`Use one of: ${SUPPORTED_PLATFORMS.join(', ')}`),
+				);
 				process.exit(1);
 			}
 
@@ -50,6 +54,7 @@ export function registerUpdateCommand(program) {
 						await install(target.dir, chain, {
 							dryRun,
 							platform: target.platform,
+							scope: target.scope,
 						});
 						console.log(chalk.green(`✓ ${presetName} updated`));
 						updated++;
@@ -75,6 +80,7 @@ export function registerUpdateCommand(program) {
 					await install(target.dir, chain, {
 						dryRun,
 						platform: target.platform,
+						scope: target.scope,
 					});
 					console.log(chalk.green('✓ global updated'));
 					updated++;

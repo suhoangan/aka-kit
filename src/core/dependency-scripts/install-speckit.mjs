@@ -11,6 +11,7 @@ import {
 	run,
 	runOk,
 } from './lib/script-helpers.js';
+import { ensureUv } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('speckit');
 const SPECKIT_VERSION = process.env.AKAKIT_SPECKIT_VERSION || 'v0.8.13';
@@ -43,7 +44,7 @@ function runSpecifyOk(args, opts = {}) {
 }
 
 if (!commandExists('specify')) {
-	if (!commandExists('uv')) {
+	if (!commandExists('uv') && !ensureUv()) {
 		warn('uv not installed — required for specify CLI');
 		warn(
 			'  install uv: https://docs.astral.sh/uv/getting-started/installation/',

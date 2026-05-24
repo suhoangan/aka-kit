@@ -16,7 +16,7 @@ import { runDependencyScripts } from './dependency-runner.js';
  * presetChain is an array of preset objects (includes first, main preset last).
  */
 export async function install(targetDir, presetChain, options = {}) {
-	const { dryRun = false, platform = 'claude' } = options;
+	const { dryRun = false, platform = 'claude', scope = 'project' } = options;
 	const installedFiles = [];
 	// The main preset is the last one in the chain
 	const mainPreset = presetChain[presetChain.length - 1];
@@ -31,7 +31,7 @@ export async function install(targetDir, presetChain, options = {}) {
 		if (preset.settings && Object.keys(preset.settings).length > 0 && !dryRun) {
 			mergeSettings(
 				targetDir,
-				resolveSettingsForTarget(preset.settings, targetDir),
+				resolveSettingsForTarget(preset.settings, targetDir, platform),
 			);
 			console.log(
 				`  ${chalk.green('+')} settings.json merged (${preset.name})`,
@@ -65,7 +65,11 @@ export async function install(targetDir, presetChain, options = {}) {
 
 		// Run dependency scripts
 		if (preset.dependencies?.scripts?.length > 0 && !dryRun) {
-			await runDependencyScripts(preset._dir, preset.dependencies.scripts);
+			await runDependencyScripts(preset._dir, preset.dependencies.scripts, {
+				platform,
+				scope,
+				targetDir,
+			});
 		}
 	}
 

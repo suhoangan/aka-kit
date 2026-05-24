@@ -36,8 +36,16 @@ export function resolveTargetDirs(platform) {
 	for (const p of platforms) {
 		const dirName = PLATFORM_DIRS[p];
 		if (!dirName) continue;
-		globalDirs.push({ dir: path.join(os.homedir(), dirName), platform: p });
-		projectDirs.push({ dir: path.join(process.cwd(), dirName), platform: p });
+		globalDirs.push({
+			dir: path.join(os.homedir(), dirName),
+			platform: p,
+			scope: 'global',
+		});
+		projectDirs.push({
+			dir: path.join(process.cwd(), dirName),
+			platform: p,
+			scope: 'project',
+		});
 	}
 
 	return { globalDirs, projectDirs };

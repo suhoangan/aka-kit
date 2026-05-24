@@ -1,16 +1,19 @@
 /**
- * Cross-platform agent-browser installer (replaces scripts/install-agent-browser.sh).
+ * Cross-platform agent-browser installer — Windows, macOS, Linux.
  */
 import {
+	augmentToolPath,
 	commandExists,
 	createLogger,
 	firstLine,
 	run,
 	runOk,
 } from './lib/script-helpers.js';
+import { ensureCargo } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('agent-browser');
 const VERSION = process.env.AKAKIT_AGENT_BROWSER_VERSION || '0.27.0';
+const isMac = process.platform === 'darwin';
 
 if (commandExists('agent-browser')) {
 	const ver = run('agent-browser', ['--version']);
@@ -19,7 +22,6 @@ if (commandExists('agent-browser')) {
 }
 
 let installed = false;
-const isMac = process.platform === 'darwin';
 
 if (isMac && commandExists('brew')) {
 	log('installing via Homebrew…');
@@ -36,7 +38,8 @@ if (!installed && commandExists('npm')) {
 	}
 }
 
-if (!installed && commandExists('cargo')) {
+if (!installed && ensureCargo()) {
+	augmentToolPath();
 	log('installing via cargo…');
 	if (runOk('cargo', ['install', 'agent-browser'])) installed = true;
 }
@@ -47,6 +50,7 @@ if (!installed) {
 	process.exit(0);
 }
 
+augmentToolPath();
 if (commandExists('agent-browser')) {
 	const ver = run('agent-browser', ['--version']);
 	log('installed:', firstLine(ver.stdout));

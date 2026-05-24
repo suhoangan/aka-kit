@@ -59,6 +59,7 @@ export function registerInitCommand(program) {
 				await install(target.dir, sharedChain, {
 					dryRun,
 					platform: target.platform,
+					scope: target.scope,
 				});
 			}
 
@@ -86,6 +87,7 @@ export function registerInitCommand(program) {
 						await install(target.dir, filtered, {
 							dryRun,
 							platform: target.platform,
+							scope: target.scope,
 						});
 					}
 				}

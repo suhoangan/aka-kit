@@ -6,10 +6,21 @@ import TOML from '@iarna/toml';
 /**
  * Replace {{HOOKS_DIR}} with platform-specific hooks path (e.g. .claude/hooks).
  */
-export function resolveSettingsForTarget(presetSettings, targetDir) {
+export function resolveSettingsForTarget(
+	presetSettings,
+	targetDir,
+	platform = 'claude',
+) {
 	if (!presetSettings) return presetSettings;
+	let settings = presetSettings;
+	// Claude Code plugins — not used by Cursor/Codex (claude-mem installed via install-claude-mem.mjs)
+	if (platform === 'cursor' || platform === 'codex') {
+		settings = { ...presetSettings };
+		delete settings.enabledPlugins;
+		delete settings.extraKnownMarketplaces;
+	}
 	const hooksDir = `${path.basename(targetDir).replace(/\\/g, '/')}/hooks`;
-	const json = JSON.stringify(presetSettings);
+	const json = JSON.stringify(settings);
 	return JSON.parse(json.replaceAll('{{HOOKS_DIR}}', hooksDir));
 }
 

@@ -249,6 +249,9 @@
 	},
 	"dependencies": {
 		"scripts": [
+			"scripts/install-prerequisites.sh",
+			"scripts/install-mcp-cache.sh",
+			"scripts/install-claude-mem.sh",
 			"scripts/install-rtk.sh",
 			"scripts/install-speckit.sh",
 			"scripts/auto-graph-init.sh",

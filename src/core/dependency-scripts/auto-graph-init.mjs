@@ -11,6 +11,7 @@ import {
 	gitRepoRoot,
 	runOk,
 } from './lib/script-helpers.js';
+import { ensureCodeReviewGraph } from './lib/prereq-installers.js';
 
 const { warn } = createLogger('graph-init');
 
@@ -20,6 +21,9 @@ if (!repo) {
 	process.exit(0);
 }
 
+if (!commandExists('code-review-graph')) {
+	ensureCodeReviewGraph();
+}
 if (!commandExists('code-review-graph')) {
 	warn(
 		"missing 'code-review-graph' CLI — skipping. Install: pipx install code-review-graph",

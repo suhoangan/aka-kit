@@ -137,7 +137,7 @@ aka-kit doctor --quick      # skip network reachability checks
 aka-kit doctor --json       # machine-readable output (for CI / scripts)
 ```
 
-Cross-platform: pure Node, works on **macOS, Linux, and Windows**. Dependency installers run as **Node scripts** (no Git Bash required). Legacy `.sh` wrappers remain for manual use on Unix.
+Cross-platform: pure Node, works on **macOS, Linux, and Windows**. `aka-kit install` auto-installs toolchain deps (**uv**, **pip/pipx**, **Python**, **Rust/cargo**, **bun**, **code-review-graph**, **claude-mem**, **MCP npm packages**, **rtk**, **agent-browser**, **spec-kit**) via Node scripts — no Git Bash required (Git Bash optional for RTK curl installer on Windows).
 
 Exit codes:
 

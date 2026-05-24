@@ -68,12 +68,17 @@ function logBashUnavailable(scriptPath) {
 	console.log(chalk.dim(`  Skipped: ${scriptPath} (no bash, no Node port)`));
 }
 
-function runNodeScript(nodeScript) {
+function runNodeScript(nodeScript, context = {}) {
 	execFileSync(process.execPath, [nodeScript], {
 		stdio: 'inherit',
 		cwd: process.cwd(),
-		timeout: 180_000,
-		env: process.env,
+		timeout: 600_000, // 10min — claude-mem / MCP prefetch can be slow on first run
+		env: {
+			...process.env,
+			AKAKIT_PLATFORM: context.platform || '',
+			AKAKIT_SCOPE: context.scope || '',
+			AKAKIT_TARGET_DIR: context.targetDir || '',
+		},
 	});
 }
 
@@ -91,7 +96,7 @@ function runBashScript(bash, scriptPath) {
  * Prefers cross-platform Node runners in src/core/dependency-scripts/.
  * Falls back to bash .sh on Unix when no Node port exists.
  */
-export async function runDependencyScripts(presetDir, scripts) {
+export async function runDependencyScripts(presetDir, scripts, context = {}) {
 	const bash = resolveBashExecutable();
 	const isWin = process.platform === 'win32';
 
@@ -101,7 +106,7 @@ export async function runDependencyScripts(presetDir, scripts) {
 		if (nodeScript) {
 			console.log(chalk.dim(`  Running: ${path.basename(nodeScript)}`));
 			try {
-				runNodeScript(nodeScript);
+				runNodeScript(nodeScript, context);
 				console.log(chalk.green(`  ✓ ${scriptPath} completed`));
 			} catch (err) {
 				const detail =
