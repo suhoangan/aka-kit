@@ -9,11 +9,14 @@ import {
 	run,
 	runOk,
 } from './lib/script-helpers.js';
-import { ensureCargo } from './lib/prereq-installers.js';
+import { ensureCargo, ensureCoreToolchain } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('agent-browser');
 const VERSION = process.env.AKAKIT_AGENT_BROWSER_VERSION || '0.27.0';
 const isMac = process.platform === 'darwin';
+
+ensureCoreToolchain();
+augmentToolPath();
 
 if (commandExists('agent-browser')) {
 	const ver = run('agent-browser', ['--version']);

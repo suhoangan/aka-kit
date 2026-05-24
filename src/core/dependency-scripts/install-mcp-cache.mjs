@@ -2,9 +2,13 @@
  * Prefetch MCP npm packages into npm cache (no server startup).
  * Cross-platform — Windows and macOS.
  */
-import { createLogger, runOk } from './lib/script-helpers.js';
+import { augmentToolPath, createLogger, runOk } from './lib/script-helpers.js';
+import { ensureCoreToolchain } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('mcp-cache');
+
+ensureCoreToolchain();
+augmentToolPath();
 
 /** Mirrors shared/preset.json MCP pinned versions. */
 const MCP_PACKAGES = [

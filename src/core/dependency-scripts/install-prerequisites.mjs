@@ -1,5 +1,5 @@
 /**
- * Auto-install uv, bun, pipx, Python (if needed), and code-review-graph.
+ * Auto-install uv, bun, pipx, Python, code-review-graph, graphify, cargo.
  * Cross-platform: Windows, macOS, Linux.
  */
 import { createLogger } from './lib/script-helpers.js';
@@ -13,6 +13,6 @@ const result = ensurePrerequisites();
 const ok = Object.values(result).filter(Boolean).length;
 const total = Object.keys(result).length;
 log(
-	`prerequisites: ${ok}/${total} ready (uv, bun, pipx, code-review-graph, cargo)`,
+	`prerequisites: ${ok}/${total} ready (uv, python, pip, pipx, bun, cargo, graphify, code-review-graph)`,
 );
 process.exit(0);

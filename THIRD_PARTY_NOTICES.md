@@ -33,6 +33,7 @@ When users run `aka-kit install`, these may be downloaded or invoked (pinned ver
 | `@vkhanhqui/figma-mcp-go`          | Figma MCP             | [vkhanhqui/figma-mcp-go](https://github.com/vkhanhqui/figma-mcp-go)             |
 | `agent-browser` CLI                | Browser automation    | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser)       |
 | `code-review-graph`                | Code graph MCP        | PyPI                                                                            |
+| `graphify`                         | Knowledge graph MCP   | [safishamsi/graphify](https://github.com/safishamsi/graphify)                   |
 | `serena` (via uvx)                 | Code intelligence MCP | [oraios/serena](https://github.com/oraios/serena)                               |
 | `rtk`                              | Token compression CLI | [rtk-ai/rtk](https://github.com/rtk-ai/rtk)                                     |
 | `specify-cli` (spec-kit)           | Spec workflow         | [github/spec-kit](https://github.com/github/spec-kit)                           |

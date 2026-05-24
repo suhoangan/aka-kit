@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import { whichBin } from './doctor-checks/utils.js';
+import { ensureCoreToolchain } from './dependency-scripts/lib/prereq-installers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const NODE_SCRIPTS_DIR = path.join(__dirname, 'dependency-scripts');
@@ -97,6 +98,15 @@ function runBashScript(bash, scriptPath) {
  * Falls back to bash .sh on Unix when no Node port exists.
  */
 export async function runDependencyScripts(presetDir, scripts, context = {}) {
+	// Bootstrap uv/python/pip/pipx/bun/cargo before any package or script install.
+	try {
+		ensureCoreToolchain();
+	} catch (err) {
+		console.warn(
+			chalk.yellow(`  ⚠ Toolchain bootstrap warning: ${err.message || err}`),
+		);
+	}
+
 	const bash = resolveBashExecutable();
 	const isWin = process.platform === 'win32';
 

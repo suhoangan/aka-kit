@@ -47,7 +47,13 @@ const BINARIES = [
 		name: 'code-review-graph',
 		level: 'recommended',
 		detail: 'structural code graph MCP',
-		fix: 'pipx install code-review-graph',
+		fix: 'aka-kit install (auto) or pipx install code-review-graph',
+	},
+	{
+		name: 'graphify',
+		level: 'recommended',
+		detail: 'knowledge graph MCP (graphify-out/graph.json)',
+		fix: 'pipx install graphify[mcp] && graphify install',
 	},
 	{
 		name: 'pipx',

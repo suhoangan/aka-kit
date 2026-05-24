@@ -9,3 +9,4 @@ aka-kit-*.tgz
 # Override ~/.gitignore_global (ignores `docs/`) — project docs must be tracked
 !/docs/
 !/docs/**
+graphify-out/

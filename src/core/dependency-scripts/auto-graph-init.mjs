@@ -11,9 +11,14 @@ import {
 	gitRepoRoot,
 	runOk,
 } from './lib/script-helpers.js';
-import { ensureCodeReviewGraph } from './lib/prereq-installers.js';
+import {
+	ensureCodeReviewGraph,
+	ensureCoreToolchain,
+} from './lib/prereq-installers.js';
 
 const { warn } = createLogger('graph-init');
+
+ensureCoreToolchain();
 
 const repo = gitRepoRoot();
 if (!repo) {

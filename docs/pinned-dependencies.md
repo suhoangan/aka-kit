@@ -2,21 +2,22 @@
 
 aka-kit pins external package and git refs used by MCP config and install scripts. Bump intentionally after review — not `@latest`.
 
-| Component                 | Pin       | Used by                                            |
-| ------------------------- | --------- | -------------------------------------------------- |
-| `@playwright/mcp`         | `0.0.75`  | `shared/preset.json` → MCP `playwright`            |
-| `agent-browser-mcp`       | `0.1.3`   | `shared/preset.json` → MCP `agent-browser`         |
-| `@vkhanhqui/figma-mcp-go` | `0.1.3`   | `shared/preset.json` → MCP `figma`                 |
-| `oraios/serena`           | `v1.5.1`  | `shared/preset.json` → MCP `serena` (uvx `--from`) |
-| `agent-browser` CLI       | `0.27.0`  | `scripts/install-agent-browser.sh`                 |
-| `rtk-ai/rtk`              | `v0.41.0` | `scripts/install-rtk.sh`                           |
-| `github/spec-kit`         | `v0.8.13` | `scripts/install-speckit.sh`                       |
-| `@tanstack/intent`        | `0.0.41`  | `nextjs/scripts/install-tanstack-intent.sh`        |
-| `claude-mem`              | `13.3.0`  | `dependency-scripts/install-claude-mem.mjs`        |
-| `code-review-graph`       | (PyPI)    | `dependency-scripts/install-prerequisites.mjs`     |
-| `@playwright/mcp`         | `0.0.75`  | `dependency-scripts/install-mcp-cache.mjs`         |
-| `agent-browser-mcp`       | `0.1.3`   | `dependency-scripts/install-mcp-cache.mjs`         |
-| `@vkhanhqui/figma-mcp-go` | `0.1.3`   | `dependency-scripts/install-mcp-cache.mjs`         |
+| Component                 | Pin       | Used by                                             |
+| ------------------------- | --------- | --------------------------------------------------- |
+| `@playwright/mcp`         | `0.0.75`  | `shared/preset.json` → MCP `playwright`             |
+| `agent-browser-mcp`       | `0.1.3`   | `shared/preset.json` → MCP `agent-browser`          |
+| `@vkhanhqui/figma-mcp-go` | `0.1.3`   | `shared/preset.json` → MCP `figma`                  |
+| `oraios/serena`           | `v1.5.1`  | `shared/preset.json` → MCP `serena` (uvx `--from`)  |
+| `agent-browser` CLI       | `0.27.0`  | `scripts/install-agent-browser.sh`                  |
+| `rtk-ai/rtk`              | `v0.41.0` | `scripts/install-rtk.sh`                            |
+| `github/spec-kit`         | `v0.8.13` | `scripts/install-speckit.sh`                        |
+| `@tanstack/intent`        | `0.0.41`  | `nextjs/scripts/install-tanstack-intent.sh`         |
+| `claude-mem`              | `13.3.0`  | `dependency-scripts/install-claude-mem.mjs`         |
+| `code-review-graph`       | (PyPI)    | `dependency-scripts/install-prerequisites.mjs`      |
+| `graphify[mcp]`           | `0.8.17`  | `install-prerequisites.mjs`, `install-graphify.mjs` |
+| `@playwright/mcp`         | `0.0.75`  | `install-mcp-cache.mjs`                             |
+| `agent-browser-mcp`       | `0.1.3`   | `install-mcp-cache.mjs`                             |
+| `@vkhanhqui/figma-mcp-go` | `0.1.3`   | `install-mcp-cache.mjs`                             |
 
 Override for local testing (optional env vars):
 
@@ -26,3 +27,4 @@ Override for local testing (optional env vars):
 - `AKAKIT_TANSTACK_INTENT_VERSION=0.0.41`
 - `AKAKIT_SERENA_VERSION=v1.5.1`
 - `AKAKIT_CLAUDE_MEM_VERSION=13.3.0`
+- `AKAKIT_GRAPHIFY_VERSION=0.8.17`

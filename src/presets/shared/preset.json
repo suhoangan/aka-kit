@@ -255,6 +255,7 @@
 			"scripts/install-rtk.sh",
 			"scripts/install-speckit.sh",
 			"scripts/auto-graph-init.sh",
+			"scripts/install-graphify.sh",
 			"scripts/install-agent-browser.sh"
 		]
 	}

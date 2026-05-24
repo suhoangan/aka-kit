@@ -55,7 +55,7 @@ if ! command -v code-review-graph >/dev/null 2>&1; then
     exit 0
 fi
 if [ "$WITH_GRAPHIFY" = "1" ] && ! command -v graphify >/dev/null 2>&1; then
-    warn "missing 'graphify' CLI — install: pipx install graphifyy"
+    warn "missing 'graphify' CLI — install: pipx install graphify"
     exit 1
 fi
 

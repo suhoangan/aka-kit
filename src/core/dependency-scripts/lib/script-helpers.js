@@ -57,6 +57,13 @@ export function resolvePython() {
 	return null;
 }
 
+/** Absolute path to Python for MCP configs (Windows-safe). */
+export function resolvePythonBin() {
+	const name = resolvePython();
+	if (!name) return null;
+	return resolveCmd(name) || name;
+}
+
 export function run(bin, args, opts = {}) {
 	augmentToolPath();
 	const resolved = resolveCmd(bin) || bin;

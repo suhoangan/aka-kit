@@ -3,7 +3,7 @@
  */
 import os from 'node:os';
 import { augmentToolPath, createLogger, runOk } from './lib/script-helpers.js';
-import { ensureBun, ensureUv } from './lib/prereq-installers.js';
+import { ensureCoreToolchain } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('claude-mem');
 const VERSION = process.env.AKAKIT_CLAUDE_MEM_VERSION || '13.3.0';
@@ -15,8 +15,7 @@ if (platform === 'codex') {
 	process.exit(0);
 }
 
-ensureUv();
-ensureBun();
+ensureCoreToolchain();
 augmentToolPath();
 
 const ide = platform === 'cursor' ? 'cursor' : 'claude-code';

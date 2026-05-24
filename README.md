@@ -137,7 +137,7 @@ aka-kit doctor --quick      # skip network reachability checks
 aka-kit doctor --json       # machine-readable output (for CI / scripts)
 ```
 
-Cross-platform: pure Node, works on **macOS, Linux, and Windows**. `aka-kit install` auto-installs toolchain deps (**uv**, **pip/pipx**, **Python**, **Rust/cargo**, **bun**, **code-review-graph**, **claude-mem**, **MCP npm packages**, **rtk**, **agent-browser**, **spec-kit**) via Node scripts — no Git Bash required (Git Bash optional for RTK curl installer on Windows).
+Cross-platform: pure Node, works on **macOS, Linux, and Windows**. `aka-kit install` **bootstraps the core toolchain first** (uv → Python → pip → pipx → bun → cargo) on every dependency script, then installs packages (code-review-graph, graphify, claude-mem, MCP npm packages, rtk, agent-browser, spec-kit) — no Git Bash required (Git Bash optional for RTK curl installer on Windows).
 
 Exit codes:
 
@@ -246,25 +246,21 @@ Skipped silently when:
 
 Re-running is safe — `@tanstack/intent install` reconciles the skill block on every invocation, so updating a TanStack package and re-running `aka-kit install --nextjs` keeps skills in sync.
 
-## Auto graph-init
+## Auto graph-init + graphify
 
-Every install auto-runs `aka-graph-init` against the current git repo. It:
+Every **project** install (in a git repo) auto-runs:
 
-- Builds `code-review-graph` (AST-only, free, no LLM cost)
-- Registers the repo in the multi-repo graph registry
-- Adds `.code-review-graph/` to `.gitignore`
-- Wires `.husky/post-commit` + `post-checkout` delegates (if husky is detected)
+1. **code-review-graph** — AST-only structural graph (free)
+2. **graphify** — knowledge graph per [graphify docs](https://github.com/safishamsi/graphify): `pipx install graphify[mcp]` → `graphify install` (grammars) → `graphify update .`
+3. Wires **`graphify-<repo>`** MCP into `.claude/.mcp.json` or `.cursor/.mcp.json` when `graphify-out/graph.json` exists
+4. Adds `.code-review-graph/` and `graphify-out/` to `.gitignore`
+5. Husky hook delegates when `.husky/_` is present
 
-Skipped silently if the CWD is not a git repo or `code-review-graph` CLI is not installed.
-
-Prereqs (one-time, global):
-
-```bash
-pipx install code-review-graph graphifyy
-```
-
-To upgrade with the full graphify graph + MCP entry later:
+Prerequisites are **auto-installed** on `aka-kit install` (Windows + macOS). Manual fallback:
 
 ```bash
-/aka:graph-init --with-graphify
+pipx install 'graphify[mcp]==0.8.17' code-review-graph
+graphify install   # tree-sitter grammars (required once)
 ```
+
+Re-run `/aka:graph-init --with-graphify` to refresh the graph or MCP entry.

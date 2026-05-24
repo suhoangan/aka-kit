@@ -43,12 +43,19 @@ Pass user flags through:
 ## Prereqs
 
 - Project must be a git repo
-- `pipx install graphifyy code-review-graph` (one-time global install)
+- **Auto-installed** on `aka-kit install`: `graphify[mcp]` + `graphify install`, `code-review-graph`
+- Manual fallback: `pipx install 'graphify[mcp]' code-review-graph && graphify install`
 - Global git hooks (optional): `git config --global core.hooksPath ~/.config/git/hooks`
 
 ## Auto-install
 
-`aka-kit install` auto-runs this in code-review-graph-only mode. To upgrade with graphify later, run `/ak:graph-init --with-graphify`.
+`aka-kit install` auto-runs **code-review-graph** + **graphify** in project git repos:
+
+- Installs `graphify[mcp]` + runs `graphify install` (tree-sitter grammars)
+- Builds `graphify-out/graph.json` and wires `graphify-<alias>` MCP
+- Registers `code-review-graph` and updates `.gitignore`
+
+Manual refresh: `/aka:graph-init --with-graphify`
 
 ## After running
 

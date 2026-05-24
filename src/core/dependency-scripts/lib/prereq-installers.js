@@ -12,6 +12,9 @@ const { log, warn } = createLogger('prereq');
 const isWin = process.platform === 'win32';
 const isMac = process.platform === 'darwin';
 
+/** Cached result — toolchain bootstrap runs once per aka-kit install session. */
+let _coreCache = null;
+
 export function ensureUv() {
 	augmentToolPath();
 	if (commandExists('uv')) return true;
@@ -69,11 +72,21 @@ export function ensurePython() {
 		if (commandExists('uv')) {
 			runOk('uv', ['python', 'install', '3.12']);
 		}
-	} else {
-		warn('install Python 3.12+ manually: https://www.python.org/downloads/');
-		return false;
 	}
 	augmentToolPath();
+	if (resolvePython()) return true;
+
+	// Fallback: uv python (macOS + Windows when winget/brew unavailable)
+	if (commandExists('uv') || ensureUv()) {
+		log('installing Python 3.12 via uv…');
+		runOk('uv', ['python', 'install', '3.12']);
+		augmentToolPath();
+		if (resolvePython()) return true;
+	}
+
+	if (isWin) {
+		warn('install Python 3.12+ manually: https://www.python.org/downloads/');
+	}
 	return Boolean(resolvePython());
 }
 
@@ -172,6 +185,7 @@ export function ensureCargo() {
 }
 
 export function ensureCodeReviewGraph() {
+	ensureCoreToolchain();
 	augmentToolPath();
 	if (commandExists('code-review-graph')) return true;
 
@@ -206,19 +220,94 @@ export function ensureCodeReviewGraph() {
 	return false;
 }
 
+const GRAPHIFY_VERSION = process.env.AKAKIT_GRAPHIFY_VERSION || '0.8.17';
+const GRAPHIFY_PIP_SPEC = `graphify[mcp]==${GRAPHIFY_VERSION}`;
+
+/** Install graphify CLI + MCP extra, then run `graphify install` (tree-sitter grammars). */
+export function ensureGraphify() {
+	ensureCoreToolchain();
+	augmentToolPath();
+	if (!commandExists('graphify')) {
+		log(`installing ${GRAPHIFY_PIP_SPEC}…`);
+		let installed = false;
+		if (
+			commandExists('pipx') &&
+			runOk('pipx', ['install', GRAPHIFY_PIP_SPEC])
+		) {
+			installed = true;
+		} else if (
+			commandExists('uv') &&
+			runOk('uv', ['tool', 'install', GRAPHIFY_PIP_SPEC])
+		) {
+			installed = true;
+		} else {
+			const py = resolvePython();
+			if (
+				py &&
+				ensurePip() &&
+				runOk(py, ['-m', 'pip', 'install', '--user', GRAPHIFY_PIP_SPEC])
+			) {
+				installed = true;
+			}
+		}
+		if (!installed) {
+			warn(
+				'graphify install failed — run: pipx install graphify[mcp] && graphify install',
+			);
+			return false;
+		}
+		augmentToolPath();
+	}
+
+	if (!commandExists('graphify')) {
+		warn('graphify CLI not on PATH after install');
+		return false;
+	}
+
+	log('running graphify install (tree-sitter grammars)…');
+	if (!runOk('graphify', ['install'], { timeout: 300_000, stdio: 'inherit' })) {
+		warn('graphify install failed — tree-sitter grammars may be missing');
+		return false;
+	}
+	log('graphify CLI ready');
+	return true;
+}
+
 export function ensureUvx() {
 	augmentToolPath();
 	if (commandExists('uvx')) return true;
 	return ensureUv() && commandExists('uvx');
 }
 
-/** Install all recommended toolchain deps (idempotent). */
-export function ensurePrerequisites() {
+/**
+ * Bootstrap core env tools before any package/script install.
+ * Order: uv → python → pip → pipx → uvx → bun → cargo
+ * Idempotent; cached for the rest of the install session.
+ */
+export function ensureCoreToolchain() {
+	if (_coreCache) return _coreCache;
+
+	log('bootstrapping core toolchain (uv, python, pip, pipx, bun, cargo)…');
+	augmentToolPath();
+
 	const uv = ensureUv();
-	const bun = ensureBun();
+	const python = ensurePython();
+	const pip = python ? ensurePip() : false;
 	const pipx = ensurePipx();
-	const crg = ensureCodeReviewGraph();
+	const uvx = ensureUvx();
+	const bun = ensureBun();
 	const cargo = ensureCargo();
-	ensureUvx();
-	return { uv, bun, pipx, crg, cargo };
+
+	_coreCache = { uv, python, pip, pipx, uvx, bun, cargo };
+	const ready = Object.values(_coreCache).filter(Boolean).length;
+	log(`core toolchain: ${ready}/7 ready`);
+	return _coreCache;
+}
+
+/** Install all recommended toolchain deps + Python packages (idempotent). */
+export function ensurePrerequisites() {
+	const core = ensureCoreToolchain();
+	const crg = ensureCodeReviewGraph();
+	const graphify = ensureGraphify();
+	return { ...core, crg, graphify };
 }

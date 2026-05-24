@@ -8,10 +8,13 @@ import {
 	createLogger,
 	runInherit,
 } from './lib/script-helpers.js';
+import { ensureCoreToolchain } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('tanstack-intent');
 const VERSION = process.env.AKAKIT_TANSTACK_INTENT_VERSION || '0.0.41';
 const pkgPath = path.join(process.cwd(), 'package.json');
+
+ensureCoreToolchain();
 
 if (!fs.existsSync(pkgPath)) {
 	log('no package.json in', process.cwd(), '— skipping');

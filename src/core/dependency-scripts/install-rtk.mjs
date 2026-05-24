@@ -10,12 +10,15 @@ import {
 	runOk,
 	runSh,
 } from './lib/script-helpers.js';
-import { ensureCargo } from './lib/prereq-installers.js';
+import { ensureCargo, ensureCoreToolchain } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('rtk');
 const RTK_VERSION = process.env.AKAKIT_RTK_VERSION || 'v0.41.0';
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
+
+ensureCoreToolchain();
+augmentToolPath();
 
 function rtkWorks() {
 	if (!commandExists('rtk')) return false;

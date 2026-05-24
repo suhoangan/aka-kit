@@ -11,10 +11,12 @@ import {
 	run,
 	runOk,
 } from './lib/script-helpers.js';
-import { ensureUv } from './lib/prereq-installers.js';
+import { ensureCoreToolchain, ensureUv } from './lib/prereq-installers.js';
 
 const { log, warn } = createLogger('speckit');
 const SPECKIT_VERSION = process.env.AKAKIT_SPECKIT_VERSION || 'v0.8.13';
+
+ensureCoreToolchain();
 
 const repo = gitRepoRoot();
 if (!repo) {
