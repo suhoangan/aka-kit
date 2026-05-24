@@ -20,28 +20,28 @@ CONTRIBUTING.md             # Dev guide
 
 One file per CLI verb. Each exports a `register<Name>Command(program)` function called from `bin/aka-kit.js`.
 
-| File | Verb | Purpose |
-| ---- | ---- | ------- |
-| `install.js` | `install` | Resolve preset chain → call core installer |
-| `uninstall.js` | `uninstall` | Read manifest → remove files → rewrite settings |
-| `list.js` | `list` | Show installed presets per platform |
-| `update.js` | `update` | Re-install presets with latest version |
-| `presets.js` | `presets` | List available presets |
-| `doctor.js` | `doctor` | Health-check env, binaries, MCP, skills, permissions |
+| File           | Verb        | Purpose                                              |
+| -------------- | ----------- | ---------------------------------------------------- |
+| `install.js`   | `install`   | Resolve preset chain → call core installer           |
+| `uninstall.js` | `uninstall` | Read manifest → remove files → rewrite settings      |
+| `list.js`      | `list`      | Show installed presets per platform                  |
+| `update.js`    | `update`    | Re-install presets with latest version               |
+| `presets.js`   | `presets`   | List available presets                               |
+| `doctor.js`    | `doctor`    | Health-check env, binaries, MCP, skills, permissions |
 
 ## src/core/
 
 Reusable logic shared by commands.
 
-| File | Purpose |
-| ---- | ------- |
-| `installer.js` | `install(targetDir, presetChain, opts)` — copies artifacts, merges settings, writes manifest |
-| `preset-resolver.js` | Walks `includes:` chain (e.g. `nextjs → shared`), returns ordered preset list |
-| `settings-merger.js` | `mergeSettings`, `mergeMcpConfig` (JSON), `mergeMcpConfigToml` (Codex), `mergePermissions` |
-| `manifest.js` | Read/write `.aka-kit.json` (legacy `.akakit.json`; tracks installed presets per target) |
-| `platforms.js` | `resolveTargetDirs(platform)` for claude/cursor/codex/both/all |
-| `dependency-runner.js` | Execute `dependencies.scripts` (bash) with timeout, non-fatal on failure |
-| `doctor-checks/*.js` | One module per check category (binaries, node, mcp-config, skills, permissions, env-vars) |
+| File                   | Purpose                                                                                                     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `installer.js`         | `install(targetDir, presetChain, opts)` — copies artifacts, merges settings, writes manifest                |
+| `preset-resolver.js`   | Walks `includes:` chain (e.g. `nextjs → shared`), returns ordered preset list                               |
+| `settings-merger.js`   | `mergeSettings`, `mergeMcpConfig` (JSON), `mergeMcpConfigToml` (Codex), `mergePermissions`                  |
+| `manifest.js`          | Read/write `.aka-kit.json` (legacy `.akakit.json`; tracks installed presets per target)                     |
+| `platforms.js`         | `resolveTargetDirs(platform)` for claude/cursor/codex/both/all                                              |
+| `dependency-runner.js` | Run `dependencies.scripts` via cross-platform Node (`.mjs` in `dependency-scripts/`), bash fallback on Unix |
+| `doctor-checks/*.js`   | One module per check category (binaries, node, mcp-config, skills, permissions, env-vars)                   |
 
 ## src/presets/
 
@@ -61,14 +61,14 @@ Each subdir is a self-contained preset.
 
 `includes: ["shared"]` makes the preset prepend shared's artifacts before its own. The chain is flattened by `preset-resolver.js` and processed in order — later presets override earlier ones on key collisions (e.g. settings, permissions).
 
-| Preset | Includes | Adds |
-| ------ | -------- | ---- |
-| shared | — | 12 skills, 4 rules, MCP servers, plugins, auto-install scripts |
-| global | — | Global hooks, primary-workflow / orchestration rules |
-| nextjs | shared | 6 frontend skills, tanstack-intent script |
-| php | shared | 4 backend skills |
-| hubspot | shared | 3 hubspot skills, hubspot rules |
-| turbo-strapi-nextjs | shared | 6 frontend skills + monorepo/strapi/nextjs rules |
+| Preset              | Includes | Adds                                                           |
+| ------------------- | -------- | -------------------------------------------------------------- |
+| shared              | —        | 12 skills, 4 rules, MCP servers, plugins, auto-install scripts |
+| global              | —        | Global hooks, primary-workflow / orchestration rules           |
+| nextjs              | shared   | 6 frontend skills, tanstack-intent script                      |
+| php                 | shared   | 4 backend skills                                               |
+| hubspot             | shared   | 3 hubspot skills, hubspot rules                                |
+| turbo-strapi-nextjs | shared   | 6 frontend skills + monorepo/strapi/nextjs rules               |
 
 ## Manifest format
 
@@ -76,13 +76,13 @@ Each subdir is a self-contained preset.
 
 ```json
 {
-  "presets": {
-    "nextjs": {
-      "version": "0.1.0",
-      "installedAt": "2026-05-24T13:30:00Z",
-      "files": [".claude/skills/aka-git/SKILL.md", "..."]
-    }
-  }
+	"presets": {
+		"nextjs": {
+			"version": "0.1.0",
+			"installedAt": "2026-05-24T13:30:00Z",
+			"files": [".claude/skills/aka-git/SKILL.md", "..."]
+		}
+	}
 }
 ```
 
@@ -98,16 +98,17 @@ Used by `uninstall` to safely remove only files this preset wrote, and by `list`
 
 ## Cross-platform contract
 
-| Layer | Cross-platform? | Notes |
-| ----- | --------------- | ----- |
-| CLI (`bin/aka-kit.js`, `src/`) | ✅ Yes | Pure Node, uses `path.join`, `os.homedir()`, `process.platform` checks |
-| Doctor | ✅ Yes | `whichBin()` walks PATH with PATHEXT on Windows |
-| Settings merger | ✅ Yes | fs-extra, JSON/TOML |
-| Dependency scripts (`shared/scripts/*.sh`) | ⚠️ POSIX only | Auto-skipped on Windows (no bash) — log warning, continue |
-| Hooks (`.cjs`) | ✅ Yes | Node-based |
+| Layer                          | Cross-platform?                                              | Notes                                                                  |
+| ------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| CLI (`bin/aka-kit.js`, `src/`) | ✅ Yes                                                       | Pure Node, uses `path.join`, `os.homedir()`, `process.platform` checks |
+| Doctor                         | ✅ Yes                                                       | `whichBin()` walks PATH with PATHEXT on Windows                        |
+| Settings merger                | ✅ Yes                                                       | fs-extra, JSON/TOML                                                    |
+| Dependency scripts             | ✅ Node `.mjs` on all platforms; `.sh` fallback on Unix only |
+| Hooks (`.cjs`)                 | ✅ Yes                                                       | Node-based                                                             |
 
 ## File size policy
 
 Code files > 200 LOC trigger split. Current outliers:
+
 - `src/core/installer.js` (~210 LOC) — borderline, will split if it grows
 - `src/core/settings-merger.js` (~180 LOC) — OK

@@ -137,7 +137,7 @@ aka-kit doctor --quick      # skip network reachability checks
 aka-kit doctor --json       # machine-readable output (for CI / scripts)
 ```
 
-Cross-platform: pure Node, works on **macOS, Linux, and Windows**. On Windows the dependency `.sh` scripts are flagged as warnings (use WSL or Git Bash to run them).
+Cross-platform: pure Node, works on **macOS, Linux, and Windows**. Dependency installers run as **Node scripts** (no Git Bash required). Legacy `.sh` wrappers remain for manual use on Unix.
 
 Exit codes:
 
