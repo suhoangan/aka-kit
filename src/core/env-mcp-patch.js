@@ -1,22 +1,31 @@
 import fs from 'fs-extra';
+import os from 'os';
 import path from 'node:path';
 import TOML from '@iarna/toml';
 import { expandPlatform } from './platforms.js';
 import { getPlatformProfile } from './platform-profiles.js';
 
-/** Inject collected keys into platform MCP configs (project dirs only). */
+/**
+ * Inject collected keys into MCP configs (project + user-scope per platform).
+ */
 export function applyEnvToMcpDirs(cwd, platform, vars) {
 	const platforms = expandPlatform(platform);
+	const home = os.homedir();
 
 	for (const p of platforms) {
 		const profile = getPlatformProfile(p);
-		const dir = path.join(cwd, profile.configDir);
-		if (!fs.existsSync(dir)) continue;
+		const dirs = [
+			path.join(cwd, profile.configDir),
+			path.join(home, profile.configDir),
+		];
 
-		if (profile.mcpFormat === 'toml') {
-			patchCodexToml(dir, vars);
-		} else {
-			patchMcpJson(dir, vars);
+		for (const dir of [...new Set(dirs)]) {
+			if (!fs.existsSync(dir)) continue;
+			if (profile.mcpFormat === 'toml') {
+				patchCodexToml(dir, vars);
+			} else {
+				patchMcpJson(dir, vars);
+			}
 		}
 	}
 }

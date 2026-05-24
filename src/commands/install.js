@@ -1,6 +1,8 @@
 import chalk from 'chalk';
-import { resolvePresets } from '../core/preset-resolver.js';
-import { install, installTemplatesOnly } from '../core/installer.js';
+import {
+	reinstallProjectPreset,
+	reinstallUserScopePresets,
+} from '../core/preset-install.js';
 import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
@@ -133,8 +135,7 @@ export function registerInstallCommand(program) {
 					),
 				);
 				try {
-					const sharedChain = resolvePresets('shared');
-					await install(target.dir, sharedChain, {
+					await reinstallUserScopePresets(target.dir, ['shared'], {
 						dryRun,
 						platform: target.platform,
 						scope: target.scope,
@@ -166,25 +167,19 @@ export function registerInstallCommand(program) {
 					);
 
 					try {
-						const chain = resolvePresets(presetName);
-						// For project presets, copy shared templates (e.g. CLAUDE.md / AGENTS.md) to project root
-						if (flagKey !== 'global') {
-							const sharedPreset = chain.find((p) => p.name === 'shared');
-							if (sharedPreset)
-								installTemplatesOnly(target.dir, sharedPreset, {
-									dryRun,
-									platform: target.platform,
-								});
+						if (flagKey === 'global') {
+							await reinstallUserScopePresets(target.dir, ['global'], {
+								dryRun,
+								platform: target.platform,
+								scope: target.scope,
+							});
+						} else {
+							await reinstallProjectPreset(target.dir, presetName, {
+								dryRun,
+								platform: target.platform,
+								scope: target.scope,
+							});
 						}
-						// Filter out the shared preset from chain — already installed globally
-						const filtered = chain.filter((p) => p.name !== 'shared');
-						if (filtered.length === 0) continue;
-
-						await install(target.dir, filtered, {
-							dryRun,
-							platform: target.platform,
-							scope: target.scope,
-						});
 						console.log(chalk.green(`✓ ${presetName} preset installed`));
 					} catch (err) {
 						console.error(

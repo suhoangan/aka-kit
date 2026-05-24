@@ -2,7 +2,7 @@
 name: aka:graph-init
 description: Bootstrap code-review-graph + graphify for the current project. Builds + registers the graph, adds gitignore entries, wires husky/global post-commit hooks. Use when user says "graph-init", "init graph", "setup graph for this project", or starts a new repo.
 allowed-tools: Bash
-version: 1.1.0
+version: 1.2.0
 ---
 
 # aka:graph-init
@@ -20,7 +20,7 @@ bash setup.sh [--with-graphify] [--alias NAME] [--skip-husky] [--skip-mcp]
 Skill install paths:
 
 - Claude Code: `~/.claude/skills/aka-graph-init/setup.sh`
-- Cursor: `~/.cursor/skills/aka-graph-init/setup.sh`
+- Cursor: `~/.cursor/skills/aka-graph-init/setup.sh` or `setup.ps1` (Windows)
 
 ### Windows
 

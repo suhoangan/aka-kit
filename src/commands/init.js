@@ -1,7 +1,9 @@
 import chalk from 'chalk';
 import prompts from 'prompts';
-import { resolvePresets } from '../core/preset-resolver.js';
-import { install, installTemplatesOnly } from '../core/installer.js';
+import {
+	reinstallProjectPreset,
+	reinstallUserScopePresets,
+} from '../core/preset-install.js';
 import {
 	SUPPORTED_PLATFORMS,
 	DEFAULT_PLATFORM,
@@ -60,15 +62,13 @@ export function registerInitCommand(program) {
 				forceInteractive: options.forceInteractive || false,
 			});
 
-			// Reuse install flow inline
 			for (const target of targetSet.globalDirs) {
 				console.log(
 					chalk.bold(
 						`\nInstalling ${chalk.cyan('shared')} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 					),
 				);
-				const sharedChain = resolvePresets('shared');
-				await install(target.dir, sharedChain, {
+				await reinstallUserScopePresets(target.dir, ['shared'], {
 					dryRun,
 					platform: target.platform,
 					scope: target.scope,
@@ -84,19 +84,14 @@ export function registerInitCommand(program) {
 							`\nInstalling ${chalk.cyan(name)} → ${chalk.dim(formatScopeContext(target.scope, target.platform))}`,
 						),
 					);
-					const chain = resolvePresets(name);
-					if (!isGlobal) {
-						const sharedPreset = chain.find((p) => p.name === 'shared');
-						if (sharedPreset) {
-							installTemplatesOnly(target.dir, sharedPreset, {
-								dryRun,
-								platform: target.platform,
-							});
-						}
-					}
-					const filtered = chain.filter((p) => p.name !== 'shared');
-					if (filtered.length > 0) {
-						await install(target.dir, filtered, {
+					if (isGlobal) {
+						await reinstallUserScopePresets(target.dir, ['global'], {
+							dryRun,
+							platform: target.platform,
+							scope: target.scope,
+						});
+					} else {
+						await reinstallProjectPreset(target.dir, name, {
 							dryRun,
 							platform: target.platform,
 							scope: target.scope,

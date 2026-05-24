@@ -12,7 +12,7 @@ SCALE >= 6  → Use internal scouting instead
 
 ## Configuration
 
-Read from `.claude/.ck.json`:
+Read from `~/.cursor/.ck.json` or `~/.claude/.ck.json`:
 ```json
 {
   "gemini": {
