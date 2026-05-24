@@ -98,6 +98,12 @@ aka-kit install [options]
 ## Examples
 
 ```bash
+# Interactive wizard (platform → auto-detected project type → optional global)
+aka-kit install
+
+# Same flow via init
+aka-kit init
+
 # Install Next.js preset for current project
 aka-kit install --nextjs
 

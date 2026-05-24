@@ -6,8 +6,16 @@ import {
 	DEFAULT_PLATFORM,
 	resolveTargetDirs,
 } from '../core/platforms.js';
-import { pickPlatformInteractive } from '../core/cli-prompts.js';
-import { PRESET_FLAGS, flagKeyToPresetName } from '../core/preset-flags.js';
+import {
+	pickPlatformInteractive,
+	pickProjectPresetInteractive,
+	confirmGlobalPreset,
+} from '../core/cli-prompts.js';
+import {
+	PRESET_FLAGS,
+	flagKeyToPresetName,
+	presetNameToFlag,
+} from '../core/preset-flags.js';
 
 /**
  * Register the install command with Commander program.
@@ -70,19 +78,29 @@ export function registerInstallCommand(program) {
 			const selected = PRESET_FLAGS.filter((flag) => options[flag]);
 
 			if (selected.length === 0) {
-				console.log(chalk.yellow('No preset selected. Use a flag to choose:'));
-				console.log('');
-				console.log('  aka-kit install --nextjs');
-				console.log('  aka-kit install --fullstack-nextjs');
-				console.log('  aka-kit install --node-backend');
-				console.log('  aka-kit install --hubspot');
-				console.log('  aka-kit install --php');
-				console.log('  aka-kit install --global');
-				console.log('');
-				console.log(
-					chalk.dim('Run "aka-kit presets" to see all available presets.'),
-				);
-				process.exit(1);
+				if (process.stdin.isTTY) {
+					const presetName = await pickProjectPresetInteractive();
+					selected.push(presetNameToFlag(presetName));
+					if (await confirmGlobalPreset()) {
+						selected.push('global');
+					}
+				} else {
+					console.log(
+						chalk.yellow('No preset selected. Use a flag to choose:'),
+					);
+					console.log('');
+					console.log('  aka-kit install --nextjs');
+					console.log('  aka-kit install --fullstack-nextjs');
+					console.log('  aka-kit install --node-backend');
+					console.log('  aka-kit install --hubspot');
+					console.log('  aka-kit install --php');
+					console.log('  aka-kit install --global');
+					console.log('');
+					console.log(
+						chalk.dim('Run "aka-kit presets" to see all available presets.'),
+					);
+					process.exit(1);
+				}
 			}
 
 			const dryRun = options.dryRun || false;
@@ -160,6 +178,9 @@ function printDocs() {
 	console.log(chalk.bold('\naka-kit setup docs\n'));
 	console.log('Install one or more presets:');
 	console.log('  aka-kit install --nextjs');
+	console.log(
+		'  aka-kit install              # interactive: platform → project type (auto-detect)',
+	);
 	console.log('  aka-kit install --fullstack-nextjs');
 	console.log('  aka-kit install --node-backend');
 	console.log('  aka-kit install --php');

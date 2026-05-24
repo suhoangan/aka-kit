@@ -9,7 +9,7 @@ import {
 } from '../core/platforms.js';
 import {
 	pickPlatformInteractive,
-	pickPresetInteractive,
+	pickProjectPresetInteractive,
 	confirmGlobalPreset,
 	confirmDryRun,
 } from '../core/cli-prompts.js';
@@ -29,10 +29,10 @@ export function registerInitCommand(program) {
 		.action(async (options) => {
 			console.log(chalk.bold('\naka-kit init\n'));
 
-			const preset = await pickPresetInteractive();
 			const platform = options.platform
 				? options.platform.toLowerCase()
 				: await pickPlatformInteractive();
+			const preset = await pickProjectPresetInteractive();
 			const includeGlobal = await confirmGlobalPreset();
 			const dryRun = options.dryRun ?? (await confirmDryRun());
 

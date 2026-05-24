@@ -1,6 +1,12 @@
 import prompts from 'prompts';
+import chalk from 'chalk';
 import { getAvailablePresets } from './preset-resolver.js';
 import { presetToCliFlag } from './preset-flags.js';
+import {
+	detectProjectPreset,
+	presetDisplayName,
+	PROJECT_PRESET_NAMES,
+} from './project-detector.js';
 
 export const PLATFORM_CHOICES = [
 	{
@@ -42,6 +48,45 @@ export async function pickPlatformInteractive() {
 		{ onCancel: () => process.exit(130) },
 	);
 	return platform;
+}
+
+export async function pickProjectPresetInteractive(cwd = process.cwd()) {
+	const available = getAvailablePresets().filter((p) =>
+		PROJECT_PRESET_NAMES.includes(p.name),
+	);
+	const detection = detectProjectPreset(cwd);
+	const detectedIndex = detection.preset
+		? available.findIndex((p) => p.name === detection.preset)
+		: -1;
+	const initial = detectedIndex >= 0 ? detectedIndex : 0;
+
+	if (detection.preset) {
+		const label = presetDisplayName(detection.preset);
+		console.log(
+			chalk.dim(
+				`Auto-detected: ${chalk.cyan(label)} (${detection.reason}, ${detection.confidence} confidence)`,
+			),
+		);
+	}
+
+	const { preset } = await prompts(
+		{
+			type: 'select',
+			name: 'preset',
+			message: 'Project type?',
+			choices: available.map((p) => ({
+				title: presetDisplayName(p.name),
+				value: p.name,
+				description:
+					p.name === detection.preset
+						? `${p.description} — suggested`
+						: p.description,
+			})),
+			initial,
+		},
+		{ onCancel: () => process.exit(130) },
+	);
+	return preset;
 }
 
 export async function pickPresetInteractive() {
