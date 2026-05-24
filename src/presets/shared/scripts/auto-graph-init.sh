@@ -8,13 +8,13 @@ set -u
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SETUP="$SCRIPT_DIR/../skills/aka-graph-init/setup.sh"
 
-if [ ! -x "$SETUP" ]; then
-    echo "[aka-kit] graph-init setup.sh not executable — skipping" >&2
+if [ ! -f "$SETUP" ]; then
+    echo "[aka-kit] graph-init setup.sh not found — skipping" >&2
     exit 0
 fi
 
-# Run non-interactively, fail-soft.
-"$SETUP" --quiet || {
+# Run non-interactively, fail-soft (bash path — npm may strip +x on setup.sh).
+bash "$SETUP" --quiet || {
     echo "[aka-kit] graph-init skipped (non-fatal)" >&2
     exit 0
 }
