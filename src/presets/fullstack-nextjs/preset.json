@@ -1,0 +1,18 @@
+{
+	"name": "fullstack-nextjs",
+	"description": "Full-stack Next.js — frontend + DB + auth + payments + deploy (via shared)",
+	"includes": ["nextjs"],
+	"artifacts": {
+		"skills": [],
+		"rules": [],
+		"hooks": [],
+		"templates": []
+	},
+	"permissions": {
+		"allow": []
+	},
+	"settings": {},
+	"dependencies": {
+		"scripts": []
+	}
+}

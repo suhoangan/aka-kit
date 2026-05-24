@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Delegates to global git hook (graph-init / code-review-graph rebuild).
+# Requires: git config --global core.hooksPath ~/.config/git/hooks
+# aka:graph-init writes this when .husky/_ is present.
+[ -x "$HOME/.config/git/hooks/post-commit" ] && "$HOME/.config/git/hooks/post-commit" "$@"
+exit 0

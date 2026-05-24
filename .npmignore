@@ -1,5 +1,5 @@
 .git/
 .gitignore
-.ak-kit.json
+.aka-kit.json
 *.bak.*
 .DS_Store

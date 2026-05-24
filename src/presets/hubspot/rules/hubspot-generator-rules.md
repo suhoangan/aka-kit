@@ -28,6 +28,29 @@ This outputs `page-module-map.json` + `page-module-map.md` listing all modules w
 
 When a Figma URL **has** a `node-id` parameter, skip this step and proceed directly to asset download.
 
+## Frame Fill Detection (CRITICAL — MCP Blindspot)
+
+**MCP tools (`get_node`, `get_design_context`, `scan_nodes_by_types`) do NOT expose fills on FRAME nodes** — solid colors, gradients, and image fills are all invisible. Only `cornerRadius`, `padding`, `strokes` are returned.
+
+**You MUST use screenshot analysis** to detect and replicate frame backgrounds:
+
+1. **Save screenshot** of the frame via `save_screenshots`
+2. **Read screenshot visually** and classify:
+   - **Solid color** → extract hex, use `background-color`
+   - **Linear/radial gradient** → identify direction + color stops, use CSS `linear-gradient()` / `radial-gradient()`
+   - **Image fill** → export frame as background asset, use `background-image` with `background-size: cover`
+   - **Image + overlay** → export image + add overlay div with gradient or semi-transparent color
+   - **Multiple fills** → Figma stacks fills bottom-to-top; replicate with layered CSS or overlay divs
+3. **Cross-check clues** from MCP data:
+   - White/light text on a frame with no MCP fills → dark background exists
+   - Zero RECTANGLE/VECTOR children but screenshot shows background → fills are on FRAME itself
+4. **For gradients in HubSpot `fields.js`** — provide editable controls:
+   ```js
+   fi.color('Gradient start', 'gradient_start', { default: { color: '#7c39ff', opacity: 100 } }),
+   fi.color('Gradient end', 'gradient_end', { default: { color: '#1c1624', opacity: 100 } }),
+   ```
+5. **For background images** — use editable `fi.image()` field in `styleGroup`
+
 ## Project-Specific Patterns
 
 ### Field Definitions — `fields.js` (NOT `fields.json`)
@@ -35,6 +58,7 @@ When a Figma URL **has** a `node-id` parameter, skip this step and proceed direc
 - Import shared fields from `src/shared/`: `spacing-fields.js`, `cta-fields.js`, `title-fields.js`
 - Always include `spacingFields()` in `styleGroup()` for consistent spacing controls
 - Use `group()` with `occurrence` for repeated items (cards, FAQ items, carousel slides)
+- **NEVER use reserved HubSpot field names:** `label`, `body`, `name`, `type`, `id`. Use prefixed alternatives (e.g., `card_label`, `body_text`)
 
 ### Partials — Reuse existing renderers
 - **Every module** must include `spacing.html` partial at top for spacing CSS vars

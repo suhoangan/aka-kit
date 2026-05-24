@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - run: pnpm install
+
+      - name: Build release tarball
+        id: pack
+        run: node scripts/release-pack.mjs
+
+      - name: Extract changelog for tag
+        id: notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES_FILE="${RUNNER_TEMP}/release-notes.md"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { capture=1; next }
+            capture && /^## \[/ { exit }
+            capture { print }
+          ' CHANGELOG.md > "$NOTES_FILE"
+          if [ ! -s "$NOTES_FILE" ]; then
+            echo "No CHANGELOG section for version ${VERSION}; using tag message only." >&2
+            echo "# ${GITHUB_REF_NAME}" > "$NOTES_FILE"
+            echo "" >> "$NOTES_FILE"
+            echo "See [CHANGELOG.md](CHANGELOG.md)." >> "$NOTES_FILE"
+          fi
+          {
+            echo "" >> "$NOTES_FILE"
+            echo "## Install" >> "$NOTES_FILE"
+            echo '```bash' >> "$NOTES_FILE"
+            echo "npm install -g github://${{ github.repository }}#${GITHUB_REF_NAME}" >> "$NOTES_FILE"
+            echo "# one-off (no global install):" >> "$NOTES_FILE"
+            echo "npx --package=github://${{ github.repository }}#${GITHUB_REF_NAME} aka-kit install --nextjs" >> "$NOTES_FILE"
+            echo '```' >> "$NOTES_FILE"
+            echo "path=$NOTES_FILE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "${{ steps.notes.outputs.path }}" \
+            "${{ steps.pack.outputs.tarball }}"

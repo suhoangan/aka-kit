@@ -1,45 +1,97 @@
 import chalk from 'chalk';
-import path from 'path';
-import os from 'os';
 import { uninstall } from '../core/installer.js';
+import {
+	SUPPORTED_PLATFORMS,
+	DEFAULT_PLATFORM,
+	resolveTargetDirs,
+} from '../core/platforms.js';
 
-const PRESET_FLAGS = ['nextjs', 'hubspot', 'php', 'global'];
+const PRESET_FLAGS = [
+	'nextjs',
+	'hubspot',
+	'php',
+	'global',
+	'turboStrapiNextjs',
+	'fullstackNextjs',
+	'nodeBackend',
+];
+
+const PRESET_NAME_MAP = {
+	turboStrapiNextjs: 'turbo-strapi-nextjs',
+	fullstackNextjs: 'fullstack-nextjs',
+	nodeBackend: 'node-backend',
+};
 
 /**
  * Register the uninstall command.
- * Removes artifacts installed by a preset using the .ak-kit.json manifest.
+ * Removes artifacts installed by a preset using the `.aka-kit.json` manifest.
  */
 export function registerUninstallCommand(program) {
-  program
-    .command('uninstall')
-    .description('Remove installed preset artifacts')
-    .option('--nextjs', 'Uninstall Next.js preset')
-    .option('--hubspot', 'Uninstall HubSpot preset')
-    .option('--php', 'Uninstall PHP preset')
-    .option('--global', 'Uninstall global user-scope preset')
-    .option('--dry-run', 'Preview what would be removed')
-    .action(async (options) => {
-      const selected = PRESET_FLAGS.filter(flag => options[flag]);
+	program
+		.command('uninstall')
+		.description('Remove installed preset artifacts')
+		.option('--nextjs', 'Uninstall Next.js preset')
+		.option('--hubspot', 'Uninstall HubSpot preset')
+		.option('--php', 'Uninstall PHP preset')
+		.option('--global', 'Uninstall global user-scope preset')
+		.option('--turbo-strapi-nextjs', 'Uninstall turbo-strapi-nextjs preset')
+		.option('--fullstack-nextjs', 'Uninstall fullstack-nextjs preset')
+		.option('--node-backend', 'Uninstall node-backend preset')
+		.option(
+			'--platform <platform>',
+			'Uninstall target: claude (default) | cursor | codex | both | all',
+			DEFAULT_PLATFORM,
+		)
+		.option('--dry-run', 'Preview what would be removed')
+		.action(async (options) => {
+			const platform = (options.platform || DEFAULT_PLATFORM).toLowerCase();
+			if (!SUPPORTED_PLATFORMS.includes(platform)) {
+				console.error(
+					chalk.red(`Invalid --platform value: ${options.platform}`),
+				);
+				console.error(
+					chalk.dim(`Use one of: ${SUPPORTED_PLATFORMS.join(', ')}`),
+				);
+				process.exit(1);
+			}
 
-      if (selected.length === 0) {
-        console.log(chalk.yellow('No preset selected. Specify which preset to uninstall.'));
-        process.exit(1);
-      }
+			const selected = PRESET_FLAGS.filter((flag) => options[flag]);
 
-      for (const presetName of selected) {
-        const targetDir = presetName === 'global'
-          ? path.join(os.homedir(), '.claude')
-          : path.join(process.cwd(), '.claude');
+			if (selected.length === 0) {
+				console.log(
+					chalk.yellow(
+						'No preset selected. Specify which preset to uninstall.',
+					),
+				);
+				process.exit(1);
+			}
 
-        console.log(chalk.bold(`\nUninstalling ${chalk.cyan(presetName)} preset from ${chalk.dim(targetDir)}`));
+			const targetSet = resolveTargetDirs(platform);
 
-        try {
-          await uninstall(targetDir, presetName, { dryRun: options.dryRun || false });
-          console.log(chalk.green(`✓ ${presetName} preset uninstalled`));
-        } catch (err) {
-          console.error(chalk.red(`✗ Failed to uninstall ${presetName}: ${err.message}`));
-          process.exit(1);
-        }
-      }
-    });
+			for (const flagKey of selected) {
+				const presetName = PRESET_NAME_MAP[flagKey] || flagKey;
+				const targets =
+					flagKey === 'global' ? targetSet.globalDirs : targetSet.projectDirs;
+
+				for (const target of targets) {
+					console.log(
+						chalk.bold(
+							`\nUninstalling ${chalk.cyan(presetName)} preset from ${chalk.dim(target.dir)} ${chalk.dim(`[${target.platform}]`)}`,
+						),
+					);
+
+					try {
+						await uninstall(target.dir, presetName, {
+							dryRun: options.dryRun || false,
+						});
+						console.log(chalk.green(`✓ ${presetName} preset uninstalled`));
+					} catch (err) {
+						console.error(
+							chalk.red(`✗ Failed to uninstall ${presetName}: ${err.message}`),
+						);
+						process.exit(1);
+					}
+				}
+			}
+		});
 }

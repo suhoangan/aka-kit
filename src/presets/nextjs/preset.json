@@ -1,22 +1,37 @@
 {
-  "name": "nextjs",
-  "description": "Next.js + React + TypeScript preset",
-  "includes": ["shared"],
-  "artifacts": {
-    "skills": [
-      "ak-frontend-development",
-      "ak-web-frameworks",
-      "ak-react-best-practices",
-      "ak-ui-styling",
-      "ak-web-testing",
-      "ak-frontend-design"
-    ],
-    "rules": [],
-    "hooks": [],
-    "templates": []
-  },
-  "settings": {},
-  "dependencies": {
-    "scripts": []
-  }
+	"name": "nextjs",
+	"description": "Next.js + React + TypeScript preset",
+	"includes": ["shared"],
+	"artifacts": {
+		"skills": [
+			"aka-frontend-development",
+			"aka-web-frameworks",
+			"vercel-react-best-practices",
+			"aka-ui-styling",
+			"aka-web-testing",
+			"aka-frontend-design"
+		],
+		"rules": [],
+		"hooks": [],
+		"templates": []
+	},
+	"permissions": {
+		"allow": [
+			"Skill(aka:frontend-development)",
+			"Skill(aka:web-frameworks)",
+			"Skill(vercel-react-best-practices)",
+			"Skill(aka:ui-styling)",
+			"Skill(aka:web-testing)",
+			"Skill(aka:frontend-design)",
+			"Bash(next:*)",
+			"Bash(turbo:*)",
+			"Bash(vitest:*)",
+			"Agent(fullstack-developer)",
+			"Agent(ui-ux-designer)"
+		]
+	},
+	"settings": {},
+	"dependencies": {
+		"scripts": ["scripts/install-tanstack-intent.sh"]
+	}
 }

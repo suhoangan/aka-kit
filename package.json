@@ -1,36 +1,61 @@
 {
-  "name": "@ansh/ak-kit",
-  "version": "0.1.0",
-  "description": "Claude Code toolkit CLI — install curated skills, hooks, rules, MCP, plugins, and templates by project type",
-  "type": "module",
-  "bin": {
-    "ak-kit": "bin/ak-kit.js"
-  },
-  "files": [
-    "bin/",
-    "src/",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "start": "node bin/ak-kit.js",
-    "lint": "echo 'no linter configured yet'"
-  },
-  "keywords": [
-    "claude-code",
-    "skills",
-    "hooks",
-    "cli",
-    "toolkit"
-  ],
-  "author": "ansh",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {
-    "commander": "^12.1.0",
-    "chalk": "^5.3.0",
-    "fs-extra": "^11.2.0"
-  }
+	"name": "aka-kit",
+	"version": "0.1.1",
+	"description": "aka-kit — Claude Code toolkit CLI: install curated skills, hooks, rules, MCP, plugins, and templates by project type",
+	"type": "module",
+	"bin": {
+		"aka-kit": "bin/aka-kit.js"
+	},
+	"files": [
+		"bin/",
+		"src/",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"start": "node bin/aka-kit.js",
+		"lint": "echo 'no linter configured yet'",
+		"test:smoke": "node bin/aka-kit.js install --nextjs --dry-run",
+		"test:doctor": "node bin/aka-kit.js doctor --quick",
+		"test:ci": "node scripts/prepublish-check.mjs",
+		"release:pack": "node scripts/release-pack.mjs",
+		"release": "bumpp"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/suhoangan/aka-kit.git"
+	},
+	"bugs": {
+		"url": "https://github.com/suhoangan/aka-kit/issues"
+	},
+	"homepage": "https://github.com/suhoangan/aka-kit#readme",
+	"keywords": [
+		"claude-code",
+		"skills",
+		"hooks",
+		"cli",
+		"toolkit",
+		"aka-kit"
+	],
+	"author": "ansh",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18"
+	},
+	"dependencies": {
+		"@iarna/toml": "^2.2.5",
+		"chalk": "^5.3.0",
+		"commander": "^12.1.0",
+		"fs-extra": "^11.2.0",
+		"prompts": "^2.4.2"
+	},
+	"devDependencies": {
+		"bumpp": "^10.1.0"
+	},
+	"bumpp": {
+		"commit": true,
+		"tag": true,
+		"push": true,
+		"all": true
+	}
 }

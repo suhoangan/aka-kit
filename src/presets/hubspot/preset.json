@@ -4,17 +4,22 @@
   "includes": ["shared"],
   "artifacts": {
     "skills": [
-      "ak-hubspot-hubl",
-      "ak-hubspot-fields-js",
-      "ak-figma-to-hubspot",
-      "ak-figma-asset-exporter",
-      "ak-visual-diff-tester"
+      "aka-hubspot-hubl",
+      "aka-hubspot-fields-js",
+      "aka-visual-diff-tester"
     ],
     "rules": [
       "hubspot-generator-rules.md"
     ],
     "hooks": [],
     "templates": []
+  },
+  "permissions": {
+    "allow": [
+      "Skill(aka:hubspot-hubl)",
+      "Skill(aka:hubspot-fields-js)",
+      "Skill(aka:visual-diff-tester)"
+    ]
   },
   "settings": {},
   "dependencies": {

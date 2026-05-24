@@ -1,27 +1,30 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-const MANIFEST_FILE = '.ak-kit.json';
+const MANIFEST_FILE = '.aka-kit.json';
+/** @deprecated Pre-rename installs only */
+const LEGACY_MANIFEST_FILE = '.akakit.json';
 
 /**
- * Read the .ak-kit.json manifest from the target directory.
- * Returns null if no manifest exists.
+ * Read install manifest from target directory.
+ * Supports legacy `.akakit.json` from earlier builds.
  */
 export function readManifest(targetDir) {
-  const manifestPath = path.join(targetDir, MANIFEST_FILE);
-  if (!fs.existsSync(manifestPath)) return null;
-  try {
-    return fs.readJsonSync(manifestPath);
-  } catch {
-    return null;
-  }
+	for (const file of [MANIFEST_FILE, LEGACY_MANIFEST_FILE]) {
+		const manifestPath = path.join(targetDir, file);
+		if (!fs.existsSync(manifestPath)) continue;
+		try {
+			return fs.readJsonSync(manifestPath);
+		} catch {
+			return null;
+		}
+	}
+	return null;
 }
 
-/**
- * Write the .ak-kit.json manifest to the target directory.
- */
+/** Write `.aka-kit.json` manifest to the target directory. */
 export function writeManifest(targetDir, manifest) {
-  const manifestPath = path.join(targetDir, MANIFEST_FILE);
-  fs.ensureDirSync(targetDir);
-  fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
+	const manifestPath = path.join(targetDir, MANIFEST_FILE);
+	fs.ensureDirSync(targetDir);
+	fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
 }

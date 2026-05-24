@@ -1,45 +1,74 @@
 import chalk from 'chalk';
-import path from 'path';
-import os from 'os';
 import { readManifest } from '../core/manifest.js';
+import {
+	SUPPORTED_PLATFORMS,
+	resolveTargetDirs,
+} from '../core/platforms.js';
 
 /**
  * Register the list command.
- * Shows currently installed presets from .ak-kit.json manifests.
+ * Shows currently installed presets from `.aka-kit.json` manifests.
+ * Defaults to `all` platforms so users see every install at a glance.
  */
 export function registerListCommand(program) {
-  program
-    .command('list')
-    .description('Show installed presets')
-    .action(async () => {
-      const projectDir = path.join(process.cwd(), '.claude');
-      const globalDir = path.join(os.homedir(), '.claude');
+	program
+		.command('list')
+		.description('Show installed presets')
+		.option(
+			'--platform <platform>',
+			'Show installs for: claude | cursor | codex | both | all (default)',
+			'all',
+		)
+		.action(async (options) => {
+			const platform = (options.platform || 'all').toLowerCase();
+			if (!SUPPORTED_PLATFORMS.includes(platform)) {
+				console.error(chalk.red(`Invalid --platform value: ${options.platform}`));
+				console.error(chalk.dim(`Use one of: ${SUPPORTED_PLATFORMS.join(', ')}`));
+				process.exit(1);
+			}
 
-      console.log(chalk.bold('\nInstalled presets:\n'));
+			const targetSet = resolveTargetDirs(platform);
 
-      // Check project-level manifest
-      const projectManifest = readManifest(projectDir);
-      if (projectManifest && Object.keys(projectManifest.presets).length > 0) {
-        console.log(chalk.cyan('  Project') + chalk.dim(` (${projectDir})`));
-        for (const [name, info] of Object.entries(projectManifest.presets)) {
-          console.log(`    ${chalk.green('●')} ${name} ${chalk.dim(`v${info.version}`)}`);
-        }
-      } else {
-        console.log(chalk.dim('  No project presets installed.'));
-      }
+			console.log(chalk.bold('\nInstalled presets:\n'));
 
-      console.log('');
+			let anyFound = false;
 
-      // Check global manifest
-      const globalManifest = readManifest(globalDir);
-      if (globalManifest && globalManifest.presets?.global) {
-        console.log(chalk.cyan('  Global') + chalk.dim(` (${globalDir})`));
-        const info = globalManifest.presets.global;
-        console.log(`    ${chalk.green('●')} global ${chalk.dim(`v${info.version}`)}`);
-      } else {
-        console.log(chalk.dim('  No global preset installed.'));
-      }
+			// Project-scope installs
+			for (const target of targetSet.projectDirs) {
+				const manifest = readManifest(target.dir);
+				if (!manifest || Object.keys(manifest.presets).length === 0) continue;
+				anyFound = true;
+				console.log(
+					chalk.cyan(`  Project [${target.platform}]`) +
+						chalk.dim(` (${target.dir})`),
+				);
+				for (const [name, info] of Object.entries(manifest.presets)) {
+					console.log(
+						`    ${chalk.green('●')} ${name} ${chalk.dim(`v${info.version}`)}`,
+					);
+				}
+				console.log('');
+			}
 
-      console.log('');
-    });
+			// Global-scope installs
+			for (const target of targetSet.globalDirs) {
+				const manifest = readManifest(target.dir);
+				if (!manifest?.presets?.global) continue;
+				anyFound = true;
+				const info = manifest.presets.global;
+				console.log(
+					chalk.cyan(`  Global [${target.platform}]`) +
+						chalk.dim(` (${target.dir})`),
+				);
+				console.log(
+					`    ${chalk.green('●')} global ${chalk.dim(`v${info.version}`)}`,
+				);
+				console.log('');
+			}
+
+			if (!anyFound) {
+				console.log(chalk.dim('  No presets installed for the selected platform(s).'));
+				console.log('');
+			}
+		});
 }

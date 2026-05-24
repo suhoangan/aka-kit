@@ -1,55 +1,258 @@
 {
-  "name": "shared",
-  "description": "Common artifacts included in every project preset",
-  "includes": [],
-  "artifacts": {
-    "skills": [
-      "ak-git",
-      "ak-code-review",
-      "ak-debug",
-      "ak-test",
-      "ak-sequential-thinking",
-      "ak-scout",
-      "ak-research",
-      "ak-daily-report"
-    ],
-    "rules": [
-      "development-rules.md",
-      "documentation-management.md"
-    ],
-    "hooks": []
-  },
-  "settings": {
-    "enabledPlugins": {
-      "claude-mem@thedotmack": true,
-      "qmd@qmd": true
-    },
-    "extraKnownMarketplaces": {
-      "thedotmack": {
-        "source": {
-          "source": "github",
-          "repo": "thedotmack/claude-mem"
-        }
-      },
-      "qmd": {
-        "source": {
-          "source": "github",
-          "repo": "tobi/qmd"
-        }
-      }
-    }
-  },
-  "mcp": {
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest", "--extension"]
-    },
-    "agent-browser": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/agent-browser@latest"]
-    }
-  },
-  "dependencies": {
-    "scripts": []
-  }
+	"name": "shared",
+	"description": "Common artifacts included in every project preset",
+	"includes": [],
+	"artifacts": {
+		"skills": [
+			"aka-plan",
+			"aka-cook",
+			"aka-fix",
+			"aka-ship",
+			"aka-bootstrap",
+			"aka-check",
+			"aka-add-plugin",
+			"aka-git",
+			"aka-code-review",
+			"aka-debug",
+			"aka-test",
+			"aka-sequential-thinking",
+			"aka-scout",
+			"aka-research",
+			"aka-daily-report",
+			"aka-figma-to-code",
+			"aka-commit",
+			"aka-prompt-engineer",
+			"aka-graph-init",
+			"aka-databases",
+			"aka-better-auth",
+			"aka-payment-integration",
+			"aka-deploy",
+			"aka-devops",
+			"aka-security-scan",
+			"aka-docs"
+		],
+		"rules": [
+			"development-rules.md",
+			"documentation-management.md",
+			"rtk.md",
+			"planning-rules.md",
+			"context7.md",
+			"file-reading.md",
+			"skill-workflow-routing.md",
+			"skill-domain-routing.md",
+			"team-coordination-rules.md",
+			"permissions-policy.md"
+		],
+		"hooks": [
+			"lib/hook-utils.cjs",
+			"pretooluse-bash-guard.cjs",
+			"posttooluse-lint.cjs",
+			"posttooluse-typecheck.cjs",
+			"userprompt-plan-reminder.cjs"
+		],
+		"templates": [
+			"CLAUDE.md",
+			"AGENTS.md",
+			".gitignore",
+			".env.example",
+			"docs/project-overview-pdr.md",
+			"docs/code-standards.md",
+			"docs/codebase-summary.md",
+			"docs/system-architecture.md",
+			".husky/post-commit"
+		]
+	},
+	"permissions": {
+		"allow": [
+			"Skill(aka:plan)",
+			"Skill(aka:cook)",
+			"Skill(aka:fix)",
+			"Skill(aka:ship)",
+			"Skill(aka:bootstrap)",
+			"Skill(aka:check)",
+			"Skill(aka:add-plugin)",
+			"Skill(aka:git)",
+			"Skill(aka:code-review)",
+			"Skill(aka:debug)",
+			"Skill(aka:test)",
+			"Skill(aka:sequential-thinking)",
+			"Skill(aka:scout)",
+			"Skill(aka:research)",
+			"Skill(aka:daily-report)",
+			"Skill(aka:figma-to-code)",
+			"Skill(aka:commit)",
+			"Skill(aka:prompt-engineer)",
+			"Skill(aka:graph-init)",
+			"Skill(aka:databases)",
+			"Skill(aka:better-auth)",
+			"Skill(aka:payment-integration)",
+			"Skill(aka:deploy)",
+			"Skill(aka:devops)",
+			"Skill(aka:security-scan)",
+			"Skill(aka:docs)",
+			"Bash(aka-kit:*)",
+			"Bash(pnpm add:*)",
+			"Bash(git status:*)",
+			"Bash(git diff:*)",
+			"Bash(git log:*)",
+			"Bash(git branch:*)",
+			"Bash(git show:*)",
+			"Bash(git stash:*)",
+			"Bash(git add:*)",
+			"Bash(git commit:*)",
+			"Bash(npm:*)",
+			"Bash(npx:*)",
+			"Bash(pnpm:*)",
+			"Bash(yarn:*)",
+			"Bash(node:*)",
+			"Bash(* --version)",
+			"Bash(* --help)",
+			"mcp__playwright__*",
+			"mcp__agent-browser__*",
+			"mcp__figma__*",
+			"mcp__context7__*",
+			"mcp__code-review-graph__*",
+			"mcp__serena__*",
+			"Agent(code-reviewer)",
+			"Agent(tester)",
+			"Agent(debugger)",
+			"Agent(researcher)",
+			"Agent(planner)",
+			"Agent(scout)",
+			"Agent(docs-manager)",
+			"Agent(git-manager)",
+			"Agent(project-manager)",
+			"Agent(ui-ux-designer)",
+			"Agent(fullstack-developer)"
+		],
+		"deny": [
+			"Bash(rm -rf /:*)",
+			"Bash(rm -rf /)",
+			"Bash(rm -rf ~:*)",
+			"Bash(rm -rf ~/*)",
+			"Bash(sudo rm:*)",
+			"Bash(curl * | bash)",
+			"Bash(curl * | sh)",
+			"Bash(wget * | bash)",
+			"Bash(wget * | sh)"
+		],
+		"ask": [
+			"Bash(git push:*)",
+			"Bash(git push --force:*)",
+			"Bash(git push -f:*)",
+			"Bash(git reset --hard:*)",
+			"Bash(rm -rf:*)",
+			"Bash(rm -r:*)",
+			"Bash(DROP *:*)",
+			"Bash(TRUNCATE *:*)"
+		]
+	},
+	"settings": {
+		"enabledPlugins": {
+			"claude-mem@thedotmack": true,
+			"qmd@qmd": true
+		},
+		"extraKnownMarketplaces": {
+			"thedotmack": {
+				"source": {
+					"source": "github",
+					"repo": "thedotmack/claude-mem"
+				}
+			},
+			"qmd": {
+				"source": {
+					"source": "github",
+					"repo": "tobi/qmd"
+				}
+			}
+		},
+		"hooks": {
+			"PreToolUse": [
+				{
+					"matcher": "Bash",
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/pretooluse-bash-guard.cjs\""
+						}
+					]
+				}
+			],
+			"PostToolUse": [
+				{
+					"matcher": "Edit|Write|MultiEdit",
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/posttooluse-lint.cjs\"",
+							"timeout": 60
+						},
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/posttooluse-typecheck.cjs\"",
+							"timeout": 90
+						}
+					]
+				}
+			],
+			"UserPromptSubmit": [
+				{
+					"hooks": [
+						{
+							"type": "command",
+							"command": "node \"{{HOOKS_DIR}}/userprompt-plan-reminder.cjs\""
+						}
+					]
+				}
+			]
+		}
+	},
+	"mcp": {
+		"playwright": {
+			"command": "npx",
+			"args": ["-y", "@playwright/mcp@latest", "--extension"]
+		},
+		"agent-browser": {
+			"command": "npx",
+			"args": ["-y", "@anthropic-ai/agent-browser@latest"]
+		},
+		"figma": {
+			"command": "npx",
+			"args": ["-y", "@vkhanhqui/figma-mcp-go@latest"]
+		},
+		"context7": {
+			"type": "http",
+			"url": "https://mcp.context7.com/mcp",
+			"headers": {
+				"CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+			}
+		},
+		"code-review-graph": {
+			"type": "stdio",
+			"command": "code-review-graph",
+			"args": ["serve"]
+		},
+		"serena": {
+			"type": "stdio",
+			"command": "uvx",
+			"args": [
+				"--python",
+				"3.13",
+				"--from",
+				"git+https://github.com/oraios/serena",
+				"serena",
+				"start-mcp-server",
+				"--context=claude-code",
+				"--project-from-cwd"
+			]
+		}
+	},
+	"dependencies": {
+		"scripts": [
+			"scripts/install-rtk.sh",
+			"scripts/install-speckit.sh",
+			"scripts/auto-graph-init.sh",
+			"scripts/install-agent-browser.sh"
+		]
+	}
 }

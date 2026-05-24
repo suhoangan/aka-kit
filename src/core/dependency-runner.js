@@ -22,7 +22,7 @@ export async function runDependencyScripts(presetDir, scripts) {
       execSync(`bash "${fullPath}"`, {
         stdio: 'inherit',
         cwd: process.cwd(),
-        timeout: 60000, // 60s max per script
+        timeout: 180000, // 3min — accommodates network installers (brew/curl/cargo)
       });
       console.log(chalk.green(`  ✓ ${scriptPath} completed`));
     } catch (err) {

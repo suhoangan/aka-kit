@@ -1,4 +1,4 @@
 node_modules/
-.ak-kit.json
-*.bak.*
+aka-kit-*.tgz
+*.log
 .DS_Store

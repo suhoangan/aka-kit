@@ -1,0 +1,38 @@
+{
+  "name": "turbo-strapi-nextjs",
+  "description": "Turborepo monorepo with Strapi v5 CMS + Next.js 15 frontend (Yarn 4)",
+  "includes": ["shared"],
+  "artifacts": {
+    "skills": [
+      "aka-frontend-development",
+      "aka-web-frameworks",
+      "aka-react-best-practices",
+      "aka-ui-styling",
+      "aka-web-testing",
+      "aka-frontend-design"
+    ],
+    "rules": [
+      "monorepo-conventions.md",
+      "nextjs-rules.md",
+      "strapi-rules.md"
+    ],
+    "hooks": [],
+    "templates": []
+  },
+  "permissions": {
+    "allow": [
+      "Skill(aka:frontend-development)",
+      "Skill(aka:web-frameworks)",
+      "Skill(aka:react-best-practices)",
+      "Skill(aka:ui-styling)",
+      "Skill(aka:web-testing)",
+      "Skill(aka:frontend-design)",
+      "Agent(fullstack-developer)",
+      "Agent(ui-ux-designer)"
+    ]
+  },
+  "settings": {},
+  "dependencies": {
+    "scripts": []
+  }
+}

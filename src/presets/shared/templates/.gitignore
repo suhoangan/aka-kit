@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.next/
+out/
+coverage/
+
+# AI tooling artifacts
+.code-review-graph/
+graphify-out/
+.serena/
+.aka-kit.json
+.akakit.json
+*.bak.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*

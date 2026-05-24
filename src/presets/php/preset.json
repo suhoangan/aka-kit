@@ -1,20 +1,30 @@
 {
-  "name": "php",
-  "description": "PHP backend (Magento 2, Laravel, Symfony) preset",
-  "includes": ["shared"],
-  "artifacts": {
-    "skills": [
-      "ak-backend-development",
-      "ak-databases",
-      "ak-ship-feature",
-      "ak-php-code-reviewer"
-    ],
-    "rules": [],
-    "hooks": [],
-    "templates": []
-  },
-  "settings": {},
-  "dependencies": {
-    "scripts": []
-  }
+	"name": "php",
+	"description": "PHP backend (Magento 2, Laravel, Symfony) preset",
+	"includes": ["shared"],
+	"artifacts": {
+		"skills": [
+			"aka-backend-development",
+			"aka-ship-feature",
+			"aka-php-code-reviewer"
+		],
+		"rules": [],
+		"hooks": [],
+		"templates": []
+	},
+	"permissions": {
+		"allow": [
+			"Skill(aka:backend-development)",
+			"Skill(aka:ship-feature)",
+			"Skill(aka:php-code-reviewer)",
+			"Bash(php:*)",
+			"Bash(composer:*)",
+			"Bash(vendor/bin/*)",
+			"Bash(artisan:*)"
+		]
+	},
+	"settings": {},
+	"dependencies": {
+		"scripts": []
+	}
 }

@@ -1,0 +1,24 @@
+{
+	"name": "node-backend",
+	"description": "Node.js backend — Express/Fastify/NestJS + shared full-stack skills + MCP builder",
+	"includes": ["shared"],
+	"artifacts": {
+		"skills": ["aka-backend-development", "aka-mcp-builder"],
+		"rules": [],
+		"hooks": [],
+		"templates": []
+	},
+	"permissions": {
+		"allow": [
+			"Skill(aka:backend-development)",
+			"Skill(aka:mcp-builder)",
+			"Bash(tsx:*)",
+			"Bash(nest:*)",
+			"Agent(fullstack-developer)"
+		]
+	},
+	"settings": {},
+	"dependencies": {
+		"scripts": []
+	}
+}

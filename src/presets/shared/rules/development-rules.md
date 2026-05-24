@@ -2,6 +2,8 @@
 
 **IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
 **IMPORTANT:** You ALWAYS follow these principles: **YAGNI (You Aren't Gonna Need It) - KISS (Keep It Simple, Stupid) - DRY (Don't Repeat Yourself)**
+**IMPORTANT:** You MUST use **RTK** (Rust Token Killer, https://github.com/rtk-ai/rtk) for token-heavy CLI calls (git, npm/pnpm, build logs, etc.). See `rtk.md` rule for details.
+**IMPORTANT:** Before any non-trivial implementation, you MUST write a plan to a `.md` file under `./plans/`. See `planning-rules.md` for the layout and required content. No "I'll just keep it in my head."
 
 ## General
 - **File Naming**: Use kebab-case for file names with a meaningful name that describes the purpose of the file, doesn't matter if the file name is long, just make sure when LLMs read the file names while using Grep or other tools, they can understand the purpose of the file right away without reading the file content.
