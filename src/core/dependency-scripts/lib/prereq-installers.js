@@ -221,38 +221,41 @@ export function ensureCodeReviewGraph() {
 }
 
 const GRAPHIFY_VERSION = process.env.AKAKIT_GRAPHIFY_VERSION || '0.8.17';
-const GRAPHIFY_PIP_SPEC = `graphify[mcp]==${GRAPHIFY_VERSION}`;
+const GRAPHIFY_PIP_SPECS = [`graphify[mcp]==${GRAPHIFY_VERSION}`];
+
+function installGraphifyPackage() {
+	for (const spec of GRAPHIFY_PIP_SPECS) {
+		log(`installing ${spec}…`);
+		if (
+			commandExists('pipx') &&
+			(runOk('pipx', ['install', spec]) ||
+				runOk('pipx', ['install', '--force', spec]))
+		) {
+			return true;
+		}
+		if (commandExists('uv') && runOk('uv', ['tool', 'install', spec])) {
+			return true;
+		}
+		const py = resolvePython();
+		if (
+			py &&
+			ensurePip() &&
+			runOk(py, ['-m', 'pip', 'install', '--user', spec])
+		) {
+			return true;
+		}
+	}
+	return false;
+}
 
 /** Install graphify CLI + MCP extra, then run `graphify install` (tree-sitter grammars). */
 export function ensureGraphify() {
 	ensureCoreToolchain();
 	augmentToolPath();
 	if (!commandExists('graphify')) {
-		log(`installing ${GRAPHIFY_PIP_SPEC}…`);
-		let installed = false;
-		if (
-			commandExists('pipx') &&
-			runOk('pipx', ['install', GRAPHIFY_PIP_SPEC])
-		) {
-			installed = true;
-		} else if (
-			commandExists('uv') &&
-			runOk('uv', ['tool', 'install', GRAPHIFY_PIP_SPEC])
-		) {
-			installed = true;
-		} else {
-			const py = resolvePython();
-			if (
-				py &&
-				ensurePip() &&
-				runOk(py, ['-m', 'pip', 'install', '--user', GRAPHIFY_PIP_SPEC])
-			) {
-				installed = true;
-			}
-		}
-		if (!installed) {
+		if (!installGraphifyPackage()) {
 			warn(
-				'graphify install failed — run: pipx install graphify[mcp] && graphify install',
+				'graphify install failed — run: uv tool install "graphify[mcp]" && graphify install',
 			);
 			return false;
 		}

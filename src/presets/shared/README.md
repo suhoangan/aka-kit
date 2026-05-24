@@ -24,6 +24,16 @@ You don't install this directly. It's pulled in automatically by `--nextjs`, `--
 
 Then **packages**: code-review-graph, graphify (+ grammars), claude-mem, MCP npm cache, rtk, agent-browser, spec-kit.
 
+**claude-mem by platform** (global user hooks only — runs on `~/.cursor` / `~/.claude`, not project scope):
+
+| Platform | Command | Notes |
+| -------- | ------- | ----- |
+| Claude Code | `claude-mem install --ide claude-code` | Also enabled via `enabledPlugins` in `.claude/settings.json` |
+| Cursor | `claude-mem install --ide cursor --provider gemini` | Needs `GEMINI_API_KEY` in `~/.claude-mem/settings.json` (see [claude-mem Cursor docs](https://docs.claude-mem.ai/cursor)) |
+| Codex | skipped | Not supported |
+
+**qmd** is Claude Code only (marketplace plugin) — not installed for Cursor/Codex.
+
 Run `aka-kit doctor` or `/aka:check` to verify.
 
 See `docs/agentic-flows.md` for slash-command happy paths.

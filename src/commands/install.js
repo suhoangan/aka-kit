@@ -16,6 +16,7 @@ import {
 	flagKeyToPresetName,
 	presetNameToFlag,
 } from '../core/preset-flags.js';
+import { setupRequiredEnv, applyEnvToMcpDirs } from '../core/env-setup.js';
 
 /**
  * Register the install command with Commander program.
@@ -49,6 +50,11 @@ export function registerInstallCommand(program) {
 		.option(
 			'--dry-run',
 			'Preview what would be installed without making changes',
+		)
+		.option('--skip-env', 'Skip interactive API key / env setup prompts')
+		.option(
+			'--force-interactive',
+			'Force env UI prompts even when stdin is not a TTY',
 		)
 		.option('--docs', 'Show setup docs for install command')
 		.action(async (options) => {
@@ -105,6 +111,14 @@ export function registerInstallCommand(program) {
 
 			const dryRun = options.dryRun || false;
 			const targetSet = resolveTargetDirs(platform);
+
+			const envResult = await setupRequiredEnv({
+				platform,
+				cwd: process.cwd(),
+				dryRun,
+				skipEnv: options.skipEnv || false,
+				forceInteractive: options.forceInteractive || false,
+			});
 
 			// Step 1: Always install shared/common to all selected global targets
 			for (const target of targetSet.globalDirs) {
@@ -171,6 +185,10 @@ export function registerInstallCommand(program) {
 					}
 				}
 			}
+
+			if (envResult.values && !dryRun) {
+				applyEnvToMcpDirs(process.cwd(), platform, envResult.values);
+			}
 		});
 
 	return cmd;
@@ -206,6 +224,12 @@ function printDocs() {
 	console.log('');
 	console.log('Preview without writing:');
 	console.log('  aka-kit install --nextjs --dry-run');
+	console.log('');
+	console.log('Skip API key prompts (CI / non-interactive):');
+	console.log('  aka-kit install --nextjs --skip-env');
+	console.log('');
+	console.log('Configure keys anytime (interactive UI):');
+	console.log('  aka-kit setup-env --platform cursor');
 	console.log('');
 	console.log(chalk.dim('Target locations:'));
 	console.log(chalk.dim('  - Claude:  ~/.claude   and  <cwd>/.claude'));

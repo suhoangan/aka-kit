@@ -13,6 +13,7 @@ import {
 	confirmGlobalPreset,
 	confirmDryRun,
 } from '../core/cli-prompts.js';
+import { setupRequiredEnv, applyEnvToMcpDirs } from '../core/env-setup.js';
 
 /**
  * Interactive wizard — preset + platform + optional global.
@@ -26,6 +27,8 @@ export function registerInitCommand(program) {
 			'Skip platform prompt: claude | cursor | codex | both | all',
 		)
 		.option('--dry-run', 'Preview without writing')
+		.option('--skip-env', 'Skip API key / env setup prompts')
+		.option('--force-interactive', 'Force env UI even when not a TTY')
 		.action(async (options) => {
 			console.log(chalk.bold('\naka-kit init\n'));
 
@@ -47,6 +50,14 @@ export function registerInitCommand(program) {
 
 			console.log(chalk.dim(`\nPlan: ${flags.join(' + ')} → ${platform}`));
 			if (dryRun) console.log(chalk.yellow('Dry-run mode\n'));
+
+			const envResult = await setupRequiredEnv({
+				platform,
+				cwd: process.cwd(),
+				dryRun,
+				skipEnv: options.skipEnv || false,
+				forceInteractive: options.forceInteractive || false,
+			});
 
 			// Reuse install flow inline
 			for (const target of targetSet.globalDirs) {
@@ -91,6 +102,10 @@ export function registerInitCommand(program) {
 						});
 					}
 				}
+			}
+
+			if (envResult.values && !dryRun) {
+				applyEnvToMcpDirs(process.cwd(), platform, envResult.values);
 			}
 
 			console.log(chalk.green('\n✓ init complete'));

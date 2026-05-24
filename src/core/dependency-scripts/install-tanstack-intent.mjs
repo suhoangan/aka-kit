@@ -9,10 +9,19 @@ import {
 	runInherit,
 } from './lib/script-helpers.js';
 import { ensureCoreToolchain } from './lib/prereq-installers.js';
+import { getPlatformProfile } from '../../platform-profiles.js';
 
 const { log, warn } = createLogger('tanstack-intent');
 const VERSION = process.env.AKAKIT_TANSTACK_INTENT_VERSION || '0.0.41';
+const platform = (process.env.AKAKIT_PLATFORM || 'claude').toLowerCase();
+const scope = process.env.AKAKIT_SCOPE || 'project';
+const profile = getPlatformProfile(platform);
 const pkgPath = path.join(process.cwd(), 'package.json');
+
+if (scope === 'global') {
+	log(`skipping tanstack-intent on global ${profile.configDir} install`);
+	process.exit(0);
+}
 
 ensureCoreToolchain();
 
@@ -32,7 +41,7 @@ if (!commandExists('npx')) {
 	process.exit(0);
 }
 
-log('discovering TanStack skills via @tanstack/intent install…');
+log(`discovering TanStack skills for ${profile.label}…`);
 const res = runInherit('npx', ['-y', `@tanstack/intent@${VERSION}`, 'install']);
 if (res.status === 0) log('TanStack Agent Skills installed');
 else warn('@tanstack/intent install failed — see output above');

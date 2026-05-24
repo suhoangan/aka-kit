@@ -15,8 +15,18 @@ import {
 	ensureCodeReviewGraph,
 	ensureCoreToolchain,
 } from './lib/prereq-installers.js';
+import { getPlatformProfile } from '../../platform-profiles.js';
 
-const { warn } = createLogger('graph-init');
+const { warn, log } = createLogger('graph-init');
+
+const scope = process.env.AKAKIT_SCOPE || 'project';
+const platform = (process.env.AKAKIT_PLATFORM || 'claude').toLowerCase();
+const profile = getPlatformProfile(platform);
+
+if (scope === 'global') {
+	log(`skipping graph-init on global ${profile.configDir} install`);
+	process.exit(0);
+}
 
 ensureCoreToolchain();
 

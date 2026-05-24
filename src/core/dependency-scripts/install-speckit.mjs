@@ -12,9 +12,18 @@ import {
 	runOk,
 } from './lib/script-helpers.js';
 import { ensureCoreToolchain, ensureUv } from './lib/prereq-installers.js';
+import { getPlatformProfile } from '../../platform-profiles.js';
 
 const { log, warn } = createLogger('speckit');
 const SPECKIT_VERSION = process.env.AKAKIT_SPECKIT_VERSION || 'v0.8.13';
+const platform = (process.env.AKAKIT_PLATFORM || 'claude').toLowerCase();
+const scope = process.env.AKAKIT_SCOPE || 'project';
+const profile = getPlatformProfile(platform);
+
+if (scope === 'global') {
+	log(`skipping spec-kit init on global ${profile.configDir} install`);
+	process.exit(0);
+}
 
 ensureCoreToolchain();
 
@@ -84,7 +93,9 @@ if (fs.existsSync(path.join(repo, '.specify'))) {
 	process.exit(0);
 }
 
-log('initializing spec-kit (claude integration)…');
+log(
+	`initializing spec-kit (${profile.label} / ${profile.specKitIntegration})…`,
+);
 if (
 	runSpecifyOk(
 		[
@@ -93,18 +104,18 @@ if (
 			'--here',
 			'--force',
 			'--integration',
-			'claude',
+			profile.specKitIntegration,
 			'--ignore-agent-tools',
 		],
 		{ cwd: repo, stdio: 'inherit' },
 	)
 ) {
-	log('spec-kit initialized. Slash commands available:');
+	log(`spec-kit initialized for ${profile.label}. Slash commands available:`);
 	log('  /speckit.constitution  /speckit.specify  /speckit.plan');
 	log('  /speckit.tasks         /speckit.implement');
 } else {
 	warn(
-		'specify init failed — run manually: specify init . --here --force --integration claude',
+		`specify init failed — run manually: specify init . --here --force --integration ${profile.specKitIntegration}`,
 	);
 }
 process.exit(0);

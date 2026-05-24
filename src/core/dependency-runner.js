@@ -5,6 +5,10 @@ import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import { whichBin } from './doctor-checks/utils.js';
 import { ensureCoreToolchain } from './dependency-scripts/lib/prereq-installers.js';
+import {
+	scriptBaseName,
+	shouldRunDependencyScript,
+} from './dependency-scripts/lib/script-policy.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const NODE_SCRIPTS_DIR = path.join(__dirname, 'dependency-scripts');
@@ -111,6 +115,16 @@ export async function runDependencyScripts(presetDir, scripts, context = {}) {
 	const isWin = process.platform === 'win32';
 
 	for (const scriptPath of scripts) {
+		const base = scriptBaseName(scriptPath);
+		if (!shouldRunDependencyScript(base, context)) {
+			console.log(
+				chalk.dim(
+					`  Skipped: ${scriptPath} (${context.scope || 'project'} / ${context.platform || 'claude'})`,
+				),
+			);
+			continue;
+		}
+
 		const nodeScript = resolveNodeScript(scriptPath);
 
 		if (nodeScript) {

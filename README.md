@@ -256,7 +256,17 @@ Every **project** install (in a git repo) auto-runs:
 4. Adds `.code-review-graph/` and `graphify-out/` to `.gitignore`
 5. Husky hook delegates when `.husky/_` is present
 
-Prerequisites are **auto-installed** on `aka-kit install` (Windows + macOS). Manual fallback:
+Prerequisites are **auto-installed** on `aka-kit install` (Windows + macOS). Each platform gets its own config:
+
+| Platform | Config dir | MCP file      | spec-kit integration | Serena context  |
+| -------- | ---------- | ------------- | -------------------- | --------------- |
+| Claude   | `.claude/` | `.mcp.json`   | `claude`             | `claude-code`   |
+| Cursor   | `.cursor/` | `.mcp.json`   | `cursor-agent`       | `ide-assistant` |
+| Codex    | `.codex/`  | `config.toml` | `codex`              | `ide-assistant` |
+
+Project-only steps (graphify, spec-kit, graph-init) run in `<cwd>/.cursor` — not on global `~/.cursor` skill install.
+
+Manual fallback:
 
 ```bash
 pipx install 'graphify[mcp]==0.8.17' code-review-graph

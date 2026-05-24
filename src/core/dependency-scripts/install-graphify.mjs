@@ -1,12 +1,8 @@
 /**
- * Bootstrap graphify knowledge graph for the project (per graphify docs).
- * 1. graphify update .  (incremental build → graphify-out/)
- * 2. gitignore graphify-out/
- * 3. Wire graphify MCP into target .mcp.json when graph.json exists
- *
- * Skips on global install (graphify is per-repo).
+ * Bootstrap graphify — wires MCP to project + user Cursor/Claude config dirs.
  */
 import fs from 'fs-extra';
+import os from 'os';
 import path from 'node:path';
 import { mergeMcpConfig } from '../settings-merger.js';
 import {
@@ -14,31 +10,35 @@ import {
 	commandExists,
 	createLogger,
 	gitRepoRoot,
-	resolvePythonBin,
 	runOk,
 } from './lib/script-helpers.js';
+import {
+	graphifyMcpImportOk,
+	normalizeMcpPath,
+	resolveGraphifyPythonBin,
+} from './lib/resolve-python-for-mcp.js';
 import {
 	ensureCoreToolchain,
 	ensureGraphify,
 } from './lib/prereq-installers.js';
+import { getPlatformProfile } from '../../platform-profiles.js';
 
 const { log, warn } = createLogger('graphify');
 
 const scope = process.env.AKAKIT_SCOPE || 'project';
 const platform = (process.env.AKAKIT_PLATFORM || 'claude').toLowerCase();
 const targetDir = process.env.AKAKIT_TARGET_DIR || '';
+const profile = getPlatformProfile(platform);
 
 ensureCoreToolchain();
 
 if (scope === 'global') {
-	log('skipping project graphify bootstrap (global install)');
+	log(`skipping project graphify on global ${profile.configDir} install`);
 	process.exit(0);
 }
 
-if (platform === 'codex') {
-	log(
-		'skipping graphify MCP wiring for codex (use code-review-graph TOML separately)',
-	);
+if (profile.mcpFormat === 'toml') {
+	log(`skipping graphify MCP wiring for ${profile.label}`);
 	process.exit(0);
 }
 
@@ -51,7 +51,7 @@ if (!repo) {
 if (!commandExists('graphify')) ensureGraphify();
 if (!commandExists('graphify')) {
 	warn(
-		'graphify CLI missing — run aka-kit install or: pipx install graphify[mcp]',
+		'graphify CLI missing — run: uv tool install "graphify[mcp]" or aka-kit install',
 	);
 	process.exit(0);
 }
@@ -65,7 +65,6 @@ let built = runOk('graphify', ['update', '.'], {
 	timeout: 600_000,
 });
 if (!built) {
-	log('retry with graphify . …');
 	built = runOk('graphify', ['.'], {
 		cwd: repo,
 		stdio: 'inherit',
@@ -83,21 +82,50 @@ if (!fs.existsSync(graphJson)) {
 	process.exit(0);
 }
 
-if (targetDir && fs.existsSync(path.dirname(targetDir))) {
-	const alias = path.basename(repo);
-	const py = resolvePythonBin();
-	if (!py) {
-		warn('python not found — skip graphify MCP wiring');
-		process.exit(0);
-	}
-	mergeMcpConfig(targetDir, {
-		[`graphify-${alias}`]: {
-			type: 'stdio',
-			command: py,
-			args: ['-m', 'graphify.serve', graphJson],
-		},
-	});
-	log(`MCP wired: graphify-${alias} → ${graphJson}`);
+if (platform === 'cursor') {
+	log('installing Cursor graphify rule (.cursor/rules/graphify.mdc)…');
+	runOk('graphify', ['cursor', 'install'], { cwd: repo, stdio: 'inherit' });
+}
+
+const py = resolveGraphifyPythonBin();
+if (!py) {
+	warn(
+		'no working Python — skip graphify MCP (avoid Windows Store python stub)',
+	);
+	process.exit(0);
+}
+
+if (!graphifyMcpImportOk(py)) {
+	warn(
+		'graphify [mcp] extra missing — uv tool install "graphify[mcp]" --force',
+	);
+	process.exit(0);
+}
+
+const alias = path.basename(repo);
+const mcpEntry = {
+	[`graphify-${alias}`]: {
+		type: 'stdio',
+		command: normalizeMcpPath(py),
+		args: ['-m', 'graphify.serve', normalizeMcpPath(graphJson)],
+	},
+};
+
+const dirs = new Set();
+if (targetDir) dirs.add(targetDir);
+if (platform === 'cursor') {
+	dirs.add(path.join(os.homedir(), '.cursor'));
+}
+if (platform === 'claude') {
+	dirs.add(path.join(os.homedir(), '.claude'));
+}
+
+for (const dir of dirs) {
+	fs.ensureDirSync(dir);
+	mergeMcpConfig(dir, mcpEntry);
+	log(
+		`MCP wired (${profile.label}): graphify-${alias} → ${path.join(dir, '.mcp.json')}`,
+	);
 }
 
 process.exit(0);

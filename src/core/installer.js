@@ -8,6 +8,7 @@ import {
 	mergePermissions,
 	resolveSettingsForTarget,
 } from './settings-merger.js';
+import { resolveMcpForPlatform } from './platform-profiles.js';
 import { readManifest, writeManifest } from './manifest.js';
 import { runDependencyScripts } from './dependency-runner.js';
 
@@ -52,13 +53,14 @@ export async function install(targetDir, presetChain, options = {}) {
 
 		// Merge MCP server configs — Codex uses config.toml, others use .mcp.json
 		if (preset.mcp && Object.keys(preset.mcp).length > 0 && !dryRun) {
+			const mcp = resolveMcpForPlatform(preset.mcp, platform);
 			if (platform === 'codex') {
-				mergeMcpConfigToml(targetDir, preset.mcp);
+				mergeMcpConfigToml(targetDir, mcp);
 				console.log(
 					`  ${chalk.green('+')} config.toml merged (${preset.name})`,
 				);
 			} else {
-				mergeMcpConfig(targetDir, preset.mcp);
+				mergeMcpConfig(targetDir, mcp);
 				console.log(`  ${chalk.green('+')} .mcp.json merged (${preset.name})`);
 			}
 		}

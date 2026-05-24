@@ -14,15 +14,14 @@ import { registerRemoveCommand } from '../src/commands/remove.js';
 import { registerUpgradeCommand } from '../src/commands/upgrade.js';
 import { registerInfoCommand } from '../src/commands/info.js';
 import { registerSearchCommand } from '../src/commands/search.js';
+import { registerSetupEnvCommand } from '../src/commands/setup-env.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
 
 program
 	.name('aka-kit')
-	.description(
-		'AI coding agents toolkit CLI — Claude Code, Cursor, Codex',
-	)
+	.description('AI coding agents toolkit CLI — Claude Code, Cursor, Codex')
 	.version(pkg.version, '-v, --version');
 
 // Register all commands
@@ -38,5 +37,6 @@ registerRemoveCommand(program);
 registerUpgradeCommand(program);
 registerInfoCommand(program);
 registerSearchCommand(program);
+registerSetupEnvCommand(program);
 
 program.parse();

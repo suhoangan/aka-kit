@@ -29,7 +29,6 @@ export function augmentToolPath() {
 		path.join(home, '.bun', 'bin'),
 		path.join(home, 'AppData', 'Roaming', 'Python', 'Python312', 'Scripts'),
 		path.join(home, 'AppData', 'Roaming', 'Python', 'Python311', 'Scripts'),
-		path.join(home, 'AppData', 'Local', 'Microsoft', 'WindowsApps'),
 	];
 	if (isWin) {
 		const pyRoot = path.join(home, 'AppData', 'Local', 'Programs', 'Python');
@@ -52,16 +51,24 @@ export function resolvePython() {
 	for (const name of isWin
 		? ['py', 'python', 'python3']
 		: ['python3', 'python']) {
-		if (commandExists(name)) return name;
+		const cmd = resolveCmd(name);
+		if (!cmd || /\\WindowsApps\\/i.test(cmd)) continue;
+		if (runOk(cmd, ['-c', 'import sys'], { stdio: 'ignore' })) return name;
 	}
 	return null;
 }
 
-/** Absolute path to Python for MCP configs (Windows-safe). */
+/** Absolute path to Python for MCP configs (rejects WindowsApps stub). */
 export function resolvePythonBin() {
-	const name = resolvePython();
-	if (!name) return null;
-	return resolveCmd(name) || name;
+	augmentToolPath();
+	for (const name of isWin
+		? ['py', 'python', 'python3']
+		: ['python3', 'python']) {
+		const cmd = resolveCmd(name);
+		if (!cmd || /\\WindowsApps\\/i.test(cmd)) continue;
+		if (runOk(cmd, ['-c', 'import sys'], { stdio: 'ignore' })) return cmd;
+	}
+	return null;
 }
 
 export function run(bin, args, opts = {}) {

@@ -2,6 +2,8 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { parseSkillFrontmatter, result } from './utils.js';
+import { DOCTOR_ENV_VARS } from '../env-requirements.js';
+import { parseEnvFile } from '../env-setup.js';
 
 /**
  * Install directories the doctor inspects.
@@ -49,7 +51,9 @@ export function checkSkills() {
 		}
 		if (total === 0) continue;
 		if (bad === 0) {
-			results.push(result('Skills', loc.label, 'ok', `${total} skill(s) valid`));
+			results.push(
+				result('Skills', loc.label, 'ok', `${total} skill(s) valid`),
+			);
 		} else {
 			results.push(
 				result(
@@ -63,7 +67,14 @@ export function checkSkills() {
 		}
 	}
 	if (results.length === 0) {
-		results.push(result('Skills', 'no installs found', 'skip', 'Run `aka-kit install --<preset>` to install'));
+		results.push(
+			result(
+				'Skills',
+				'no installs found',
+				'skip',
+				'Run `aka-kit install --<preset>` to install',
+			),
+		);
 	}
 	return results;
 }
@@ -83,13 +94,23 @@ export function checkPermissions() {
 			allow = parsed?.permissions?.allow || [];
 		} catch (err) {
 			results.push(
-				result('Permissions', loc.label, 'error', `settings.json parse failed: ${err.message}`),
+				result(
+					'Permissions',
+					loc.label,
+					'error',
+					`settings.json parse failed: ${err.message}`,
+				),
 			);
 			continue;
 		}
 		const skillsDir = path.join(loc.dir, 'skills');
 		const installedSkills = fs.existsSync(skillsDir)
-			? new Set(fs.readdirSync(skillsDir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name))
+			? new Set(
+					fs
+						.readdirSync(skillsDir, { withFileTypes: true })
+						.filter((e) => e.isDirectory())
+						.map((e) => e.name),
+				)
 			: new Set();
 		const orphans = [];
 		for (const perm of allow) {
@@ -127,18 +148,20 @@ export function checkPermissions() {
 }
 
 /**
- * Check env vars referenced by MCP servers.
+ * Check env vars referenced by MCP servers and install wizard.
  */
-const ENV_VARS = [
-	{ name: 'CONTEXT7_API_KEY', level: 'recommended', detail: 'unlocks context7 MCP — get free key at https://context7.com' },
-];
+const ENV_VARS = DOCTOR_ENV_VARS;
 
 export function checkEnvVars() {
 	const results = [];
+	const cwd = process.cwd();
+	const dotEnv = parseEnvFile(path.join(cwd, '.env'));
+
 	for (const ev of ENV_VARS) {
-		const val = process.env[ev.name];
+		const val = process.env[ev.name] || dotEnv[ev.name];
 		if (val) {
-			const masked = val.length > 6 ? `${val.slice(0, 3)}…${val.slice(-3)}` : '***';
+			const masked =
+				val.length > 6 ? `${val.slice(0, 3)}…${val.slice(-3)}` : '***';
 			results.push(result('Env vars', ev.name, 'ok', `set (${masked})`));
 		} else {
 			const status = ev.level === 'required' ? 'error' : 'warn';
