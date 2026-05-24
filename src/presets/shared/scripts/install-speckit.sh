@@ -5,6 +5,8 @@
 
 set -u
 
+SPECKIT_VERSION="${AKAKIT_SPECKIT_VERSION:-v0.8.13}"
+
 log() { echo "[aka-kit:speckit] $*"; }
 warn() { echo "[aka-kit:speckit] $*" >&2; }
 
@@ -20,11 +22,11 @@ if ! command -v specify >/dev/null 2>&1; then
     if ! command -v uv >/dev/null 2>&1; then
         warn "uv not installed — required for specify CLI"
         warn "  install uv:  curl -LsSf https://astral.sh/uv/install.sh | sh"
-        warn "  then re-run: uv tool install specify-cli --from git+https://github.com/github/spec-kit.git"
+        warn "  then re-run: uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@${SPECKIT_VERSION}"
         exit 0
     fi
     log "installing specify CLI via uv tool…"
-    if ! uv tool install specify-cli --from git+https://github.com/github/spec-kit.git >/dev/null 2>&1; then
+    if ! uv tool install specify-cli --from "git+https://github.com/github/spec-kit.git@${SPECKIT_VERSION}" >/dev/null 2>&1; then
         warn "uv tool install specify-cli failed — skipping"
         exit 0
     fi

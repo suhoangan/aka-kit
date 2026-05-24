@@ -6,11 +6,14 @@ All notable changes to **aka-kit** documented here. Format follows [Keep a Chang
 
 ### Added
 
-- _(none yet)_
+- `SECURITY.md`, `THIRD_PARTY_NOTICES.md`, `docs/pinned-dependencies.md`
 
 ### Changed
 
 - Distribution: GitHub repo install (`github:owner/aka-kit#tag` via npm/pnpm/npx); CLI renamed to `aka-kit`; manifest `.aka-kit.json`; no npm registry publish
+- MCP packages pinned (no `@latest`); `agent-browser` MCP uses `agent-browser-mcp@0.1.3`
+- Install scripts pin RTK, agent-browser, spec-kit, TanStack intent, and Serena git refs
+- README security & trust section
 
 ## [0.1.1] — 2026-05-24
 

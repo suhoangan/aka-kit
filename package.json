@@ -10,7 +10,9 @@
 		"bin/",
 		"src/",
 		"README.md",
-		"LICENSE"
+		"LICENSE",
+		"SECURITY.md",
+		"THIRD_PARTY_NOTICES.md"
 	],
 	"scripts": {
 		"start": "node bin/aka-kit.js",

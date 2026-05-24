@@ -93,3 +93,5 @@ See `docs/system-architecture.md` → Release pipeline.
 ## Reporting bugs
 
 Open an issue at https://github.com/suhoangan/aka-kit/issues with output of `aka-kit doctor --json`.
+
+See [SECURITY.md](./SECURITY.md) for vulnerability reporting.

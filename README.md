@@ -39,6 +39,33 @@ aka-kit --version
 
 **Upgrade:** `aka-kit upgrade` (re-installs from latest GitHub release tag).
 
+## Security & trust
+
+aka-kit is **public and open source** ([MIT](./LICENSE), copyright ansh). Before installing:
+
+| What | Where | Notes |
+| ---- | ----- | ----- |
+| Skills, rules, hooks | `<target>/.claude/` (or `.cursor/`, `.codex/`) | Copied from presets; review with `--dry-run` |
+| Settings merge | `settings.json`, `.mcp.json` | Deep-merged; `.bak.<timestamp>` backup before overwrite |
+| Permissions | `settings.json` | Pre-approved Bash/MCP rules — see [permissions-policy](src/presets/shared/rules/permissions-policy.md) |
+| Project templates | repo root (`CLAUDE.md`, `.env.example`, …) | Skipped if file already exists |
+| Manifest | `.aka-kit.json` | Tracks installed files per target |
+
+**Network scripts** (optional, non-fatal if they fail) run on `aka-kit install`:
+
+- `install-rtk.sh` — may `curl \| sh` from **tagged** [rtk-ai/rtk](https://github.com/rtk-ai/rtk) release
+- `install-agent-browser.sh` — Homebrew / `npm install -g agent-browser@…` / cargo
+- `install-speckit.sh` — `uv tool install` from **tagged** [github/spec-kit](https://github.com/github/spec-kit)
+- `install-tanstack-intent.sh` (nextjs) — pinned `@tanstack/intent` via npx
+- `auto-graph-init.sh` — local graph build only
+
+**MCP servers** use **pinned npm/git versions** (not `@latest`). See [docs/pinned-dependencies.md](./docs/pinned-dependencies.md).
+
+**Never commit** `.env` or API keys. Use `.env.example` as a template only.
+
+- [SECURITY.md](./SECURITY.md) — report vulnerabilities
+- [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) — bundled and runtime third-party components
+
 ## Setup CLI
 
 Use the setup command:
@@ -147,14 +174,14 @@ aka-kit upgrade --check      # compare current vs latest without installing
 
 `shared` preset wires these MCP entries into `.claude/.mcp.json`:
 
-| Server                            | Transport | Requires                                              |
-| --------------------------------- | --------- | ----------------------------------------------------- |
-| `playwright` (with `--extension`) | npx       | Node                                                  |
-| `agent-browser`                   | npx       | Node                                                  |
-| `figma`                           | npx       | Node                                                  |
-| `context7`                        | http      | `CONTEXT7_API_KEY` env var (free key at context7.com) |
-| `code-review-graph`               | stdio     | `pipx install code-review-graph`                      |
-| `serena`                          | stdio     | `uvx` (`pipx install uv`)                             |
+| Server              | Package / ref (pinned)              | Transport | Requires                                              |
+| ------------------- | ----------------------------------- | --------- | ----------------------------------------------------- |
+| `playwright`        | `@playwright/mcp@0.0.75`            | npx       | Node                                                  |
+| `agent-browser`     | `agent-browser-mcp@0.1.3`           | npx       | Node; `agent-browser` CLI recommended                 |
+| `figma`             | `@vkhanhqui/figma-mcp-go@0.1.3`    | npx       | Node + Figma desktop plugin                           |
+| `context7`          | HTTP endpoint                       | http      | `CONTEXT7_API_KEY` env var (free key at context7.com) |
+| `code-review-graph` | `code-review-graph` (PyPI)          | stdio     | `pipx install code-review-graph`                      |
+| `serena`            | `oraios/serena@v1.5.1`              | stdio     | `uvx` (`pipx install uv`)                             |
 
 `claude-mem` and `qmd` are enabled as **plugins** (via `enabledPlugins`), not MCP — installed automatically.
 
@@ -166,10 +193,10 @@ Install method order:
 
 1. Already installed → skip
 2. macOS + Homebrew → `brew install rtk`
-3. Linux/macOS fallback → `curl -fsSL .../install.sh | sh`
-4. Cargo last-resort → `cargo install --git https://github.com/rtk-ai/rtk`
+3. Linux/macOS fallback → tagged RTK release install script (`v0.41.0`)
+4. Cargo last-resort → `cargo install --git … --tag v0.41.0`
 
-If all methods fail, akkit prints manual instructions and continues — install never fails because of RTK.
+If all methods fail, aka-kit prints manual instructions and continues — install never fails because of RTK.
 
 ## Auto agent-browser install
 
@@ -179,7 +206,7 @@ Install method order:
 
 1. Already installed → skip
 2. macOS + Homebrew → `brew install agent-browser`
-3. npm fallback → `npm install -g agent-browser`
+3. npm fallback → `npm install -g agent-browser@0.27.0`
 4. Cargo last-resort → `cargo install agent-browser`
 
 After install, runs `agent-browser install` once to download Chrome for Testing. On Linux, uses `--with-deps`. If every method fails, aka-kit prints manual instructions and continues — install never fails because of agent-browser.

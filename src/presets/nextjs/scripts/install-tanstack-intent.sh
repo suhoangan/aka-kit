@@ -11,6 +11,8 @@
 
 set -u
 
+TANSTACK_INTENT_VERSION="${AKAKIT_TANSTACK_INTENT_VERSION:-0.0.41}"
+
 log()  { echo "[aka-kit:tanstack-intent] $*"; }
 warn() { echo "[aka-kit:tanstack-intent] $*" >&2; }
 
@@ -36,7 +38,7 @@ fi
 
 # 4. Run intent installer — auto-wires CLAUDE.md / AGENTS.md / .cursorrules
 log "discovering TanStack skills via @tanstack/intent install…"
-if npx -y @tanstack/intent@latest install; then
+if npx -y "@tanstack/intent@${TANSTACK_INTENT_VERSION}" install; then
     log "TanStack Agent Skills installed"
 else
     warn "@tanstack/intent install failed — see output above"

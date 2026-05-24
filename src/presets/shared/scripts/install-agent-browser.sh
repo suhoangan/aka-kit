@@ -5,6 +5,8 @@
 
 set -u
 
+AGENT_BROWSER_VERSION="${AKAKIT_AGENT_BROWSER_VERSION:-0.27.0}"
+
 log()  { echo "[aka-kit:agent-browser] $*"; }
 warn() { echo "[aka-kit:agent-browser] $*" >&2; }
 
@@ -30,7 +32,7 @@ fi
 # 3. npm global install (cross-platform fallback)
 if [ "$installed" -eq 0 ] && command -v npm >/dev/null 2>&1; then
     log "installing via npm…"
-    if npm install -g agent-browser >/dev/null 2>&1; then
+    if npm install -g "agent-browser@${AGENT_BROWSER_VERSION}" >/dev/null 2>&1; then
         installed=1
     else
         warn "npm install -g agent-browser failed — falling back to cargo"

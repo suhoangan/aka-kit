@@ -4,6 +4,8 @@
 
 set -u
 
+RTK_VERSION="${AKAKIT_RTK_VERSION:-v0.41.0}"
+
 log() { echo "[aka-kit:rtk] $*"; }
 warn() { echo "[aka-kit:rtk] $*" >&2; }
 
@@ -33,7 +35,7 @@ fi
 # 3. Linux / fallback → curl installer
 if command -v curl >/dev/null 2>&1; then
     log "installing via curl installer…"
-    if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh >/dev/null 2>&1; then
+    if curl -fsSL "https://raw.githubusercontent.com/rtk-ai/rtk/${RTK_VERSION}/install.sh" | sh >/dev/null 2>&1; then
         # Installer writes to ~/.local/bin — surface PATH reminder if needed
         if ! command -v rtk >/dev/null 2>&1; then
             warn "rtk installed to ~/.local/bin — add to PATH:"
@@ -49,7 +51,7 @@ fi
 # 4. Cargo last-resort
 if command -v cargo >/dev/null 2>&1; then
     log "installing via cargo…"
-    cargo install --git https://github.com/rtk-ai/rtk >/dev/null 2>&1 && {
+    cargo install --git https://github.com/rtk-ai/rtk --tag "${RTK_VERSION}" >/dev/null 2>&1 && {
         log "installed: $(rtk --version 2>/dev/null | head -1)"
         exit 0
     }
@@ -57,6 +59,6 @@ fi
 
 warn "could not install rtk automatically. Install manually:"
 warn "  macOS:  brew install rtk"
-warn "  Linux:  curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh"
-warn "  Cargo:  cargo install --git https://github.com/rtk-ai/rtk"
+warn "  Linux:  curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/${RTK_VERSION}/install.sh | sh"
+warn "  Cargo:  cargo install --git https://github.com/rtk-ai/rtk --tag ${RTK_VERSION}"
 exit 0

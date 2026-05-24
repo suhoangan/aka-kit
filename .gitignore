@@ -1,4 +1,11 @@
 node_modules/
 aka-kit-*.tgz
+.env
+.env.*
+!.env.example
 *.log
 .DS_Store
+
+# Override ~/.gitignore_global (ignores `docs/`) — project docs must be tracked
+!/docs/
+!/docs/**
