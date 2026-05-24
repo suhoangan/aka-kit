@@ -1,7 +1,7 @@
 {
 	"name": "aka-kit",
 	"version": "0.1.1",
-	"description": "aka-kit — Claude Code toolkit CLI: install curated skills, hooks, rules, MCP, plugins, and templates by project type",
+	"description": "AI coding agents toolkit CLI — Claude Code, Cursor, Codex",
 	"type": "module",
 	"bin": {
 		"aka-kit": "bin/aka-kit.js"

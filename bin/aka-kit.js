@@ -21,7 +21,7 @@ const pkg = require('../package.json');
 program
 	.name('aka-kit')
 	.description(
-		'Claude Code toolkit — install skills, hooks, rules, MCP, plugins, and templates by project type',
+		'AI coding agents toolkit CLI — Claude Code, Cursor, Codex',
 	)
 	.version(pkg.version, '-v, --version');
 

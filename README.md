@@ -1,6 +1,6 @@
 # aka-kit
 
-`aka-kit` is a CLI to install curated preset bundles (skills, rules, hooks, templates, MCP config) for Claude Code, Cursor, and OpenAI Codex CLI workflows.
+`aka-kit` is a toolkit CLI for AI coding agents — install curated preset bundles (skills, rules, hooks, templates, MCP config) into **Claude Code**, **Cursor**, and **OpenAI Codex CLI** by project type.
 
 ## Install
 
