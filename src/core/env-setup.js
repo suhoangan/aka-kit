@@ -10,6 +10,9 @@ import {
 	maskSecret,
 	printEnvBanner,
 } from './env-interactive.js';
+import { applyEnvToMcpDirs } from './env-mcp-patch.js';
+
+export { applyEnvToMcpDirs };
 
 /** @param {string} filePath */
 export function parseEnvFile(filePath) {
@@ -86,9 +89,6 @@ export function writeClaudeMemSettings(geminiKey) {
 	fs.writeJsonSync(settingsPath, settings, { spaces: 2 });
 	return settingsPath;
 }
-
-/** Inject collected keys into platform MCP configs (local only — do not commit secrets). */
-export { applyEnvToMcpDirs } from './env-mcp-patch.js';
 
 function loadExistingValues(cwd, requirements) {
 	const fromFile = parseEnvFile(path.join(cwd, '.env'));
