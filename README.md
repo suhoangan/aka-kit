@@ -273,4 +273,10 @@ pipx install 'graphify[mcp]==0.8.17' code-review-graph
 graphify install   # tree-sitter grammars (required once)
 ```
 
-Re-run `/aka:graph-init --with-graphify` to refresh the graph or MCP entry.
+Re-run graphify bootstrap (Windows-safe):
+
+```bash
+aka-kit graph-init --with-graphify
+# or from the installed skill:
+node ~/.cursor/skills/aka-graph-init/setup.mjs --with-graphify
+```

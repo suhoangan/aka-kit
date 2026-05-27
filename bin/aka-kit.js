@@ -15,6 +15,7 @@ import { registerUpgradeCommand } from '../src/commands/upgrade.js';
 import { registerInfoCommand } from '../src/commands/info.js';
 import { registerSearchCommand } from '../src/commands/search.js';
 import { registerSetupEnvCommand } from '../src/commands/setup-env.js';
+import { registerGraphInitCommand } from '../src/commands/graph-init.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -38,5 +39,6 @@ registerUpgradeCommand(program);
 registerInfoCommand(program);
 registerSearchCommand(program);
 registerSetupEnvCommand(program);
+registerGraphInitCommand(program);
 
 program.parse();

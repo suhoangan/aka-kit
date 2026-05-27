@@ -23,8 +23,9 @@ aka-graph-init — wire knowledge graph(s) into the current project
 
 Usage: setup.sh [--with-graphify] [--alias NAME] [--skip-husky] [--skip-mcp] [--quiet]
 
-Windows: use setup.ps1 or Git Bash:
-  & "\$env:ProgramFiles\Git\bin\bash.exe" "\$env:USERPROFILE\.cursor\skills\aka-graph-init\setup.sh" --with-graphify
+Windows: use setup.mjs or setup.ps1 (preferred — no Git Bash):
+  node setup.mjs --with-graphify
+  .\\setup.ps1 -WithGraphify
 
 Steps:
   1. Verify code-review-graph (+ graphify) CLIs
