@@ -25,7 +25,7 @@ export const PLATFORM_PROFILES = {
 		specKitIntegration: 'cursor-agent',
 		serenaContext: 'ide-assistant',
 		claudeMemIde: 'cursor',
-		claudeMemProvider: 'gemini',
+		claudeMemProvider: null,
 		supportsClaudeMem: true,
 		supportsHooks: false,
 		supportsClaudeSettings: false,

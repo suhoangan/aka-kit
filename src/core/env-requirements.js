@@ -2,7 +2,7 @@ import { expandPlatform } from './platforms.js';
 
 /**
  * Env vars the install wizard may collect.
- * @typedef {'project-env' | 'claude-mem-settings'} EnvTarget
+ * @typedef {'project-env'} EnvTarget
  */
 
 export const ENV_REQUIREMENTS = [
@@ -18,26 +18,6 @@ export const ENV_REQUIREMENTS = [
 		targets: ['project-env'],
 		mcpServer: 'context7',
 		mcpHeader: 'CONTEXT7_API_KEY',
-	},
-	{
-		key: 'FIGMA_API_KEY',
-		label: 'Figma access token',
-		description: 'Optional — figma MCP when using Figma designs',
-		url: 'https://www.figma.com/developers/api#access-tokens',
-		required: false,
-		platforms: ['claude', 'cursor', 'codex'],
-		targets: ['project-env'],
-	},
-	{
-		key: 'CLAUDE_MEM_GEMINI_API_KEY',
-		label: 'Gemini API key',
-		description: 'Optional — claude-mem on Cursor (observation extraction)',
-		url: 'https://aistudio.google.com/apikey',
-		required: false,
-		doctorLevel: 'optional',
-		platforms: ['cursor'],
-		targets: ['claude-mem-settings'],
-		envAlias: 'GEMINI_API_KEY',
 	},
 ];
 
